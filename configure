@@ -1,0 +1,67 @@
+#!/usr/bin/python3
+import os
+
+
+
+
+def get_files_by_ext(path, ext):
+    file_list = []
+    with os.scandir(path) as it:
+        for entry in it:
+            if entry.name.endswith(ext):
+                # print(ext, entry.name)
+                file_list.append(entry.path)
+            elif entry.is_dir():
+                file_list.extend(get_files_by_ext(entry.path, ext))
+    return file_list
+
+def get_sources(path):
+    return get_files_by_ext(path, '.cpp')
+
+def get_headers(path):
+    return get_files_by_ext(path, '.hpp')
+
+def objectify(filepath, oldpath, newpath):
+    return filepath.replace('.cpp', '.o').replace(oldpath, newpath)
+
+def make_object(filepath, headers):
+    obj = objectify(filepath, 'src', 'obj')
+    obj_dir = os.path.dirname(obj)
+    return '\n'.join([f"{obj}: {filepath} {headers}",
+        f"\tmkdir -p {obj_dir}",
+        "\t$(CC) $(CPPFLAGS) -c -o $@ $<\n",
+    ])
+
+
+def generate_makefile():
+    src_dir = 'src'
+    compiler_cmds = [
+        '\tmkdir -p {}'
+        '\t\n'
+    ]
+    headers = ' '.join(get_headers(src_dir))
+    # print(headers)
+    source_output = '\n'.join([ make_object(x, headers) for x in get_sources(src_dir) ])
+    all_objects = ' '.join([ objectify(x, 'src', 'obj') for x in get_sources(src_dir)])
+    real_output = f"""
+    # This file is generated please do not modify!
+LIBS=-l SDL2 -l SDL2_ttf
+CC=clang++
+CPPFLAGS=-Wall -std=c++0x
+
+apothecary: {all_objects}
+\t$(CC) -o $@ $^ $(LIBS)
+
+{source_output}
+"""
+
+    return real_output
+
+
+def output_makefile():
+    makefile_content = generate_makefile()
+    with open('Makefile', 'w') as makefile:
+        makefile.write(makefile_content)
+
+
+output_makefile()

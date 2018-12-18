@@ -1,11 +1,18 @@
 #ifndef _INCLUDE_TEXTURE_HPP
 #define _INCLUDE_TEXTURE_HPP
 
+#include <memory>
+
+#include "Logger.hpp"
+
 class Texture {
 public:
+    typedef std::shared_ptr<Texture> smrtptr;
     Texture();
     virtual ~Texture();
-public:
+
+protected:
+    static Logger logger;
 };
 
 #endif /* end of include guard: _INCLUDE_TEXTURE_HPP */

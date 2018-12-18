@@ -6,20 +6,25 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_ttf.h>
 
-#include "Device.hpp"
-#include "Font.hpp"
-#include "Logger.hpp"
+#include "../TDevice.hpp"
+#include "../Font.hpp"
+#include "../Logger.hpp"
+#include "SDLRenderable.hpp"
 
 
-class SDLDevice: public Device {
+class SDLDevice: public TDevice<SDLRenderable> {
 public:
     SDLDevice();
     virtual ~SDLDevice();
 
     virtual bool init(const DataEntry& config);
+    virtual int run();
     virtual void render(float delta);
 
     virtual Font::smrtptr createFont(const char* fontName);
+
+    virtual Renderable createRenderableTexture(
+        Texture::smrtptr tex, int x, int y, int w, int h);
 
 private:
     std::vector<Font::smrtptr> fontResources;

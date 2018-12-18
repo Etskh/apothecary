@@ -1,6 +1,9 @@
 #ifndef _INCLUDE_EVENT_HPP
 #define _INCLUDE_EVENT_HPP
 
+/*
+#include <string>
+
 
 class Event {
 public:
@@ -15,6 +18,6 @@ private:
     std::string typeName;
     size_t type;
 };
-
+*/
 
 #endif /* end of include guard: _INCLUDE_EVENT_HPP */

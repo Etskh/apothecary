@@ -5,17 +5,21 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_ttf.h>
 
-#include "Font.hpp"
+#include "../Font.hpp"
+#include "../Logger.hpp"
 
 class SDLFont: public Font {
 public:
-    SDLFont (Device* device, const char* fontName);
+    SDLFont (SDL_Renderer* renderer, const char* fontName);
     virtual ~SDLFont();
 
+    Texture::smrtptr createTexture(const String& phrase);
+
 private:
+    SDL_Renderer* _renderer;
     TTF_Font* font;
     SDL_Surface* message;
-    SDL_Color color;
+    Logger logger;
 };
 
 

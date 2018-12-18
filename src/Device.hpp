@@ -2,9 +2,12 @@
 #define _INCLUDE_DEVICE_HPP
 
 #include <memory>
+#include <vector>
 
+#include "Renderable.hpp"
 #include "DataEntry.hpp"
 #include "Font.hpp"
+#include "Texture.hpp"
 
 class Device {
 public:
@@ -12,9 +15,14 @@ public:
     virtual ~Device();
 public:
     virtual bool init(const DataEntry& config) = 0;
+    virtual int run() = 0;
     virtual void render(float delta) = 0;
 
     virtual Font::smrtptr createFont(const char* fontName) = 0;
+
+    virtual Renderable createRenderableTexture(
+        Texture::smrtptr tex, int x, int y, int w, int h) = 0;
+    virtual bool destroyRenderable(Renderable renderable) = 0;
 
 protected:
     Device();

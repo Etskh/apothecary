@@ -3,7 +3,7 @@
 #include "SDLFont.hpp"
 
 SDLDevice::SDLDevice()
-    : Device()
+    : TDevice()
     , window(nullptr)
     , renderer(nullptr)
     , logger("SDLDevice")
@@ -69,16 +69,50 @@ bool SDLDevice::init(const DataEntry& config) {
     }
     logger.info("Initialized renderer");
 
-    SDL_SetRenderDrawColor(renderer, 123, 180, 230, 255);
+    // SDL_SetRenderDrawColor(renderer, 123, 180, 230, 255);
+    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 140);
 
     return true;
 }
+
+int SDLDevice::run() {
+    bool isRunning = true;
+    float delta = 0.016 * 1000;
+    SDL_Event event;
+    while(isRunning) {
+        while (SDL_PollEvent(&event)){
+            if (event.type == SDL_QUIT){
+                isRunning = false;
+            }
+        }
+
+    	this->render(delta);
+    }
+
+    return 0;
+}
+
 
 void SDLDevice::render(float delta) {
     //First clear the renderer
     SDL_RenderClear(renderer);
     //Draw the texture
     // SDL_RenderCopy(ren, tex, NULL, NULL);
+    //_renderList[0]->render(0, 0, 200, 80);
+    for( auto it = _renderables.begin(); it != _renderables.end(); ++it) {
+        SDLRenderable& renderable = it->second;
+        if( !renderable.texture ) {
+            continue;
+        }
+        // SDL_QueryTexture(_texture, NULL, NULL, &texW, &texH);
+        SDL_Rect rect = {
+            renderable.xPos,
+            renderable.yPos,
+            renderable.width,
+            renderable.height
+        };
+        SDL_RenderCopy(renderer, renderable.texture->getHandle(), NULL, &rect);
+    }
     //Update the screen
     SDL_RenderPresent(renderer);
     //Take a quick break after all that hard work
@@ -87,10 +121,15 @@ void SDLDevice::render(float delta) {
 
 
 Font::smrtptr SDLDevice::createFont(const char* fontName) {
-
-    Font::smrtptr font = Font::smrtptr( new SDLFont(this, fontName));
+    Font::smrtptr font = Font::smrtptr( new SDLFont(renderer, fontName));
     fontResources.push_back(font);
+    logger.info("Font created {}", fontName);
     return font;
 }
 
-// std::map<std::string, Font::smrtptr> fontResources;
+
+Renderable SDLDevice::createRenderableTexture(
+    Texture::smrtptr tex, int x, int y, int w, int h) {
+    SDLRenderable renderable = SDLRenderable(tex, x, y, w, h);
+    return createRenderable(renderable);
+}

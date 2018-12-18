@@ -1,3 +1,5 @@
+/*
+#include <cstdlib>
 
 #include "Event.hpp"
 
@@ -15,3 +17,4 @@ size_t Event::getType() const {
 bool Event::operator==(const char* eventName) const {
     return type == crc32(eventName);
 }
+*/

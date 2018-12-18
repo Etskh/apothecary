@@ -8,3 +8,9 @@ Device::Device() {
 Device::~Device() {
     // empty
 }
+
+/*
+void Device::renderTexture(Texture::smrtptr texture) {
+    _renderList.push_back(texture);
+}
+*/

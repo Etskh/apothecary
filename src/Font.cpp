@@ -1,7 +1,7 @@
 
 #include "Font.hpp"
 
-Font::Font (Device* device, const char* fontName)
+Font::Font (const char* fontName)
     : Resource(fontName)
 {
     // empty

@@ -1,4 +1,7 @@
 
+#include <string>
+#include <cstdio>
+
 #include "String.hpp"
 
 String::String() {
@@ -17,9 +20,33 @@ String::String(const char* str)
     // empty
 }
 
-String::operator const char*() const {
-    return value.c_str();
+String::String(std::string str)
+    : value(str)
+{
+    // empty
 }
+
+String& String::pad(size_t count, char character) {
+    for(size_t c=0; c<count; ++c) {
+        value += character;
+    }
+    return *this;
+}
+
+
+String::operator const char*() const {
+    return c_str();
+}
+
+String String::operator +(const char* str) const {
+    return String(value + str);
+}
+
+String& String::operator +=(const char* str) {
+    value += str;
+    return *this;
+}
+
 
 const char* String::c_str() const {
     return value.c_str();

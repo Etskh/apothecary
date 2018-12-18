@@ -4,14 +4,17 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 
-#include "Texture.hpp"
+#include "../Texture.hpp"
 
 class SDLTexture: public Texture {
 public:
+    SDLTexture(SDL_Texture* texture);
+    virtual ~SDLTexture();
+
+    inline SDL_Texture* getHandle() const { return _texture; }
 
 private:
-    SDL_Texture* texture;
-    SDL_Surface* surface;
+    SDL_Texture* _texture;
 };
 
 #endif /* end of include guard: _INCLUDE_SDLTEXTURE_HPP */
