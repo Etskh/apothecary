@@ -15,26 +15,6 @@ Application::Application(const char* name)
     config.setString("application title", "The Apothecary");
     config.setNumber("application width", 640);
     config.setNumber("application height", 480);
-
-    /*
-    struct GameState {
-        float timeOfDay;
-        float gold;
-        struct Factions {
-            float assassins;
-            float paladins;
-            float mercenaries;
-            float theThrone;
-        } factions;
-    };
-    */
-    state.timeOfDay = 0;
-    state.gold = 0;
-    state.factions.assassins = 0;
-    state.factions.paladins = 0;
-    state.factions.mercenaries = 0;
-    state.factions.theThrone = 0;
-
 }
 
 Application::~Application() {

@@ -6,9 +6,9 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_ttf.h>
 
+#include "../core/Logger.hpp"
 #include "../TDevice.hpp"
 #include "../Font.hpp"
-#include "../Logger.hpp"
 #include "SDLRenderable.hpp"
 
 

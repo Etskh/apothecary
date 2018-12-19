@@ -14,6 +14,7 @@ AttributeImage::AttributeImage(Texture::smrtptr texture, Device::smrtptr device)
     // empty
 }
 
+
 AttributeImage::~AttributeImage()
 {
     if( _renderable ) {

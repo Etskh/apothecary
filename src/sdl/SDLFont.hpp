@@ -5,8 +5,8 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_ttf.h>
 
+#include "../core/Logger.hpp"
 #include "../Font.hpp"
-#include "../Logger.hpp"
 
 class SDLFont: public Font {
 public:

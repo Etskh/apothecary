@@ -4,10 +4,13 @@
 #include <memory>
 #include <vector>
 
+#include "core/DataEntry.hpp"
 #include "Renderable.hpp"
-#include "DataEntry.hpp"
 #include "Font.hpp"
 #include "Texture.hpp"
+
+// #include "scene/SceneNode.hpp"
+
 
 class Device {
 public:
@@ -15,7 +18,7 @@ public:
     virtual ~Device();
 public:
     virtual bool init(const DataEntry& config) = 0;
-    virtual int run() = 0;
+    virtual int run(void) = 0;
     virtual void render(float delta) = 0;
 
     virtual Font::smrtptr createFont(const char* fontName) = 0;

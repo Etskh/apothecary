@@ -29,6 +29,8 @@ public:
 		yPos = y;
 		width = w;
 		height = h;
+
+		isDirty = true;
 	}
 
 	inline int getX() const { return static_cast<int>(xPos); }
@@ -37,6 +39,7 @@ public:
 	inline int getHeight() const { return static_cast<int>(height); }
 
 private:
+	bool isDirty;
 	// Anchor anchor;
 	float xPos;
 	float yPos;

@@ -3,7 +3,7 @@
 
 #include <memory>
 
-#include "Logger.hpp"
+#include "core/Logger.hpp"
 
 class Texture {
 public:

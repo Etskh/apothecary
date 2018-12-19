@@ -1,7 +1,7 @@
 #ifndef _INCLUDE_RESOURCE_HPP
 #define _INCLUDE_RESOURCE_HPP
 
-#include "String.hpp"
+#include "core/String.hpp"
 
 class Resource {
 public:

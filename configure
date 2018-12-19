@@ -2,8 +2,6 @@
 import os
 
 
-
-
 def get_files_by_ext(path, ext):
     file_list = []
     with os.scandir(path) as it:
@@ -35,10 +33,6 @@ def make_object(filepath, headers):
 
 def generate_makefile():
     src_dir = 'src'
-    compiler_cmds = [
-        '\tmkdir -p {}'
-        '\t\n'
-    ]
     headers = ' '.join(get_headers(src_dir))
     # print(headers)
     source_output = '\n'.join([ make_object(x, headers) for x in get_sources(src_dir) ])
@@ -47,14 +41,13 @@ def generate_makefile():
     # This file is generated please do not modify!
 LIBS=-l SDL2 -l SDL2_ttf
 CC=clang++
-CPPFLAGS=-Wall -std=c++0x
+CPPFLAGS=-Wall -std=c++0x -g
 
 apothecary: {all_objects}
 \t$(CC) -o $@ $^ $(LIBS)
 
 {source_output}
 """
-
     return real_output
 
 

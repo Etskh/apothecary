@@ -5,7 +5,6 @@
 #include <vector>
 
 #include "../Core.hpp"
-#include "../Logger.hpp"
 #include "Attribute.hpp"
 
 
@@ -17,14 +16,17 @@ public:
     SceneNode(const String& name);
     virtual ~SceneNode();
 
+    // Lifecycle
+    void update(float delta);
+
+    // Children
     void addChild(SceneNode::smrtptr node);
+
+    // Attributes
     void addAttribute(Attribute::smrtptr attribute);
-
     Attribute::smrtptr getAttribute(AttributeType type);
-
     template<class A, class... Args>
     void createAttribute(Args... args);
-
     template <class A>
     std::shared_ptr<A> get();
 

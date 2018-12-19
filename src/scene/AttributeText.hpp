@@ -1,7 +1,7 @@
 #ifndef _INCLUDE_ATTRIBUTETEXT_HPP
 #define _INCLUDE_ATTRIBUTETEXT_HPP
 
-#include "../String.hpp"
+#include "../core/String.hpp"
 #include "../Font.hpp"
 #include "../Device.hpp"
 #include "Attribute.hpp"

@@ -1,12 +1,11 @@
 #ifndef _INCLUDE_APPLICATION_HPP
 #define _INCLUDE_APPLICATION_HPP
 
-#include "DataEntry.hpp"
-#include "Logger.hpp"
-#include "Device.hpp"
+#include "Core.hpp"
 #include "scene/SceneNode.hpp"
 
-
+#include "Device.hpp"
+/*
 struct GameState {
     float timeOfDay;
     float gold;
@@ -17,7 +16,7 @@ struct GameState {
         float theThrone;
     } factions;
 };
-
+*/
 
 class Application {
 public:
@@ -29,7 +28,7 @@ private:
     Logger logger;
     Device::smrtptr device;
     //
-    GameState state;
+    // GameState state;
     DataEntry config;
     //
     SceneNode scene;
