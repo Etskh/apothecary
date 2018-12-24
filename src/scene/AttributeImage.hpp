@@ -16,6 +16,7 @@ public:
     virtual ~AttributeImage();
 
 	virtual void onInit();
+	virtual void onUpdate(float delta);
 
 public:
     Texture::smrtptr _texture;

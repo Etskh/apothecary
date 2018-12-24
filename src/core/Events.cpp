@@ -2,18 +2,34 @@
 
 using namespace event;
 
+const char* etostr(Type eventType) {
+    static const char* names[] = {
+        "Init",
+        "Update",
+        "Kill",
+        "Input_MouseUp",
+        "Input_MouseDown",
+        "Input_MouseMove",
+    };
+    return names[eventType];
+}
 
-// std::map<Type, CallbackList> _callbacks;
 
-Dispatcher::Dispatcher() {
+Dispatcher::Dispatcher(const String& name)
+    : logger(name)
+{
     // empty
 }
 Dispatcher::~Dispatcher() {
     // empty
 }
 
-void Dispatcher::send(Type eventType, const DataEntry& data) const {
+void Dispatcher::send(Type eventType, const EventData& data) const {
     auto listener = _listeners.begin();
+    if( eventType != Update) {
+        logger.debug("Dispatching event {}", etostr(eventType));
+    }
+
     while( listener != _listeners.end() ) {
         if( listener->eventType == eventType ) {
             listener->callback(eventType, data);
@@ -28,6 +44,7 @@ void Dispatcher::addListener(const String& name, Type eventType, Callback callba
         eventType,
         callback
     ));
+    logger.info("Adding listener to [id:{}] for {}", name.c_str(), etostr(eventType));
 }
 
 bool Dispatcher::removeListener(const String& name, Type eventType) {
@@ -45,6 +62,7 @@ bool Dispatcher::removeListener(const String& name, Type eventType) {
 
 bool Dispatcher::removeAllListeners(const String& name) {
     auto listener = _listeners.begin();
+    logger.info("Removing listeners from [id:{}]", name.c_str());
     while( listener != _listeners.end() ) {
         // TODO: Use crc32 for string comparison
         if( listener->name == name ) {
@@ -54,25 +72,3 @@ bool Dispatcher::removeAllListeners(const String& name) {
     }
     return true;
 }
-
-
-/*
-void Dispatcher::addListener(Type eventType, Callback callback) {
-    _callbacks[eventType].push_back(callback);
-}
-
-bool Dispatcher::removeListener(Type eventType) {
-    auto it = _callbacks.begin();
-    while( it != _callbacks.end()) {
-        auto callbackIterator = it->second.begin();
-        while( callbackIterator != it->second.end() ) {
-            if( *callbackIterator == callback ) {
-                it->second.remove(callbackIterator);
-            }
-            callbackIterator++;
-        }
-        it++;
-    }
-    return false;
-}
-*/

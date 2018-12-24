@@ -6,6 +6,9 @@
 #include <functional>
 
 
+#include "../core/Logger.hpp"
+
+
 enum AttributeType {
     ATTRIBUTETYPE_NONE,
     ATTRIBUTETYPE_TEXT,
@@ -42,7 +45,10 @@ public:
     template<class A, class... Args>
     std::shared_ptr<A> getOrCreateSibling(Args ...args);
 
+    // Lifecycle
     virtual void onInit() = 0;
+    virtual void onUpdate(float delta) {}
+    virtual void onKill() {}
 
 private:
     AttributeType _type;
@@ -53,14 +59,17 @@ private:
 
 template<class A, class... Args>
 std::shared_ptr<A> Attribute::getOrCreateSibling(Args ...args) {
-    printf("Looking for attribute:%s\n", etostr(A::type));
+    Logger logger("Attribute");
     Attribute::smrtptr attribute = _parentGetter(A::type);
+
+    logger.debug("Looking for attribute: {}", etostr(A::type));
+
     if( !attribute ) {
-        printf("Cannot find, creating new one\n");
+        logger.debug("Cannot find one, creating new one");
+
         attribute = Attribute::smrtptr(new A(args...));
         _parentAdder(attribute);
     }
-    printf("Found- casting back\n");
     return std::dynamic_pointer_cast<A>(attribute);
 }
 

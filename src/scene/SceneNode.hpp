@@ -5,16 +5,24 @@
 #include <vector>
 
 #include "../Core.hpp"
+#include "../Application.hpp"
 #include "Attribute.hpp"
 
 
 class SceneNode {
 public:
+    typedef unsigned int Guid;
+public:
     typedef std::shared_ptr<SceneNode> smrtptr;
 public:
-    SceneNode();
-    SceneNode(const String& name);
+    SceneNode(Application& app);
+    SceneNode(Application& app, const String& name);
     virtual ~SceneNode();
+
+    static Guid createGuid();
+    inline Guid getId() const { return _id; }
+
+    void onUpdate(event::Type type, event::EventData data);
 
     // Lifecycle
     void update(float delta);
@@ -32,10 +40,12 @@ public:
 
     void print_r(String& nodeText, size_t depth=0, bool isLastChild=true) const;
 
-    static SceneNode::smrtptr Create(const String& name);
+    static SceneNode::smrtptr Create(Application& app, const String& name);
 public:
+    Application& _app;
     String name;
     Logger logger;
+    Guid _id;
 
 private:
     std::vector<SceneNode::smrtptr> _children;

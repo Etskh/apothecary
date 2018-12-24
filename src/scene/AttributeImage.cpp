@@ -26,7 +26,6 @@ void AttributeImage::onInit() {
     // get x and y
     // and w and h
     _posAttribute = getOrCreateSibling<AttributePosition>();
-    _posAttribute->getX();
     _renderable = _device->createRenderableTexture(
         _texture,
         _posAttribute->getX(),
@@ -34,4 +33,14 @@ void AttributeImage::onInit() {
         _posAttribute->getWidth(),
         _posAttribute->getHeight()
     );
+}
+
+void AttributeImage::onUpdate(float delta) {
+    //Rect2d rect;
+    //_posAttribute->getRect(&rect);
+    // device->updateRenderableTexture(
+    //  _texture,
+    //  rect
+    // );
+
 }

@@ -2,21 +2,39 @@
 #include "SceneNode.hpp"
 #include "AttributePosition.hpp"
 
-SceneNode::SceneNode()
-    : logger("SceneNode")
+SceneNode::SceneNode(Application& app)
+    : _app(app)
+    , logger("SceneNode")
+    , _id(createGuid())
 {
     // empty
 }
 
-SceneNode::SceneNode(const String& name)
-    : name(name)
+SceneNode::SceneNode(Application& app, const String& name)
+    : _app(app)
+    , name(name)
     , logger("SceneNode")
+    , _id(createGuid())
 {
-    // empty
+    auto onUpdate = std::bind(&SceneNode::onUpdate, this, std::placeholders::_1, std::placeholders::_2);
+    _app.addListener(String(_id), event::Update, onUpdate);
 }
 
 SceneNode::~SceneNode() {
-    // empty
+    _app.removeAllListeners(getId());
+}
+
+SceneNode::Guid SceneNode::createGuid() {
+    static Guid guid = 0;
+    return ++guid;
+}
+
+void SceneNode::onUpdate(event::Type type, event::EventData data) {
+    // TODO: get this from the eventData
+    float delta = 0.016;
+    for( auto it=_attributes.begin(); it != _attributes.end(); ++it) {
+        (*it)->onUpdate(delta);
+    }
 }
 
 void SceneNode::addChild(SceneNode::smrtptr node) {
@@ -67,8 +85,8 @@ void SceneNode::print_r(String& nodeText, size_t depth, bool isLastChild) const 
     }
 }
 
-SceneNode::smrtptr SceneNode::Create(const String& name) {
-    auto node = SceneNode::smrtptr(new SceneNode(name));
+SceneNode::smrtptr SceneNode::Create(Application& app, const String& name) {
+    auto node = SceneNode::smrtptr(new SceneNode(app, name));
 	node->addAttribute(Attribute::smrtptr(new AttributePosition()));
 	return node;
 }

@@ -6,6 +6,7 @@
 
 #include "String.hpp"
 #include "DataEntry.hpp"
+#include "Logger.hpp"
 
 namespace event {
 
@@ -13,14 +14,19 @@ enum Type {
     Init,
     Update,
     Kill,
+    Input_MouseUp,
+    Input_MouseDown,
+    Input_MouseMove,
 };
 
-typedef std::function<void(Type, const DataEntry&)> Callback;
+typedef DataEntry EventData;
+
+typedef std::function<void(Type, const EventData&)> Callback;
 
 struct EventListener {
     String name;
-    Callback callback;
     Type eventType;
+    Callback callback;
 
     EventListener (const String& name, Type eventType, Callback callback)
         : name(name)
@@ -42,7 +48,7 @@ public:
 
     typedef std::list<Callback> CallbackList;
 
-    Dispatcher();
+    Dispatcher(const String& name);
     virtual ~Dispatcher();
 
     void send(Type eventType, const DataEntry& data) const;
@@ -50,6 +56,9 @@ public:
     void addListener(const String& name, Type eventType, Callback callback);
     bool removeListener(const String& name, Type eventType);
     bool removeAllListeners(const String& name);
+
+public:
+    Logger logger;
 
 private:
     std::list<EventListener> _listeners;

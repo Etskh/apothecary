@@ -9,12 +9,13 @@
 #include "../core/Logger.hpp"
 #include "../TDevice.hpp"
 #include "../Font.hpp"
+#include "../Application.hpp"
 #include "SDLRenderable.hpp"
 
 
 class SDLDevice: public TDevice<SDLRenderable> {
 public:
-    SDLDevice();
+    SDLDevice(Application& app);
     virtual ~SDLDevice();
 
     virtual bool init(const DataEntry& config);
@@ -29,6 +30,7 @@ public:
 private:
     std::vector<Font::smrtptr> fontResources;
     Logger logger;
+    Application& _app;
     SDL_Window* window;
     SDL_Renderer* renderer;
 };

@@ -2,36 +2,15 @@
 #define _INCLUDE_APPLICATION_HPP
 
 #include "Core.hpp"
-#include "scene/SceneNode.hpp"
 
-#include "Device.hpp"
-/*
-struct GameState {
-    float timeOfDay;
-    float gold;
-    struct Factions {
-        float assassins;
-        float paladins;
-        float mercenaries;
-        float theThrone;
-    } factions;
-};
-*/
-
-class Application {
+class Application: public event::Dispatcher {
 public:
     Application(const char* name);
     virtual ~Application();
-    int run();
+    virtual int run() = 0;
 
-private:
-    Logger logger;
-    Device::smrtptr device;
-    //
-    // GameState state;
+protected:
     DataEntry config;
-    //
-    SceneNode scene;
 };
 
 

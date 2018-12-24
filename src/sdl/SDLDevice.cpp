@@ -2,11 +2,12 @@
 #include "SDLDevice.hpp"
 #include "SDLFont.hpp"
 
-SDLDevice::SDLDevice()
+SDLDevice::SDLDevice(Application& app)
     : TDevice()
+    , logger("SDLDevice")
+    , _app(app)
     , window(nullptr)
     , renderer(nullptr)
-    , logger("SDLDevice")
 {
     // empty
 }
@@ -80,9 +81,26 @@ int SDLDevice::run() {
     float delta = 0.016 * 1000;
     SDL_Event event;
     while(isRunning) {
-        while (SDL_PollEvent(&event)){
-            if (event.type == SDL_QUIT){
+        event::EventData updateData;
+        _app.send(event::Update, updateData);
+        /*
+        Input_MouseUp,
+        Input_MouseDown,
+        Input_MouseMove,
+        */
+        while (SDL_PollEvent(&event)) {
+            event::EventData mouseData;
+
+            switch(event.type) {
+            case SDL_MOUSEBUTTONDOWN:
+                _app.send(event::Input_MouseDown, mouseData);
+                break;
+            case SDL_MOUSEBUTTONUP:
+                _app.send(event::Input_MouseUp, mouseData);
+                break;
+            case SDL_QUIT:
                 isRunning = false;
+                break;
             }
         }
 
@@ -95,6 +113,7 @@ int SDLDevice::run() {
 
 void SDLDevice::render(float delta) {
     //First clear the renderer
+    SDL_SetRenderDrawColor(renderer, 30, 30, 60, SDL_ALPHA_OPAQUE);
     SDL_RenderClear(renderer);
     //Draw the texture
     // SDL_RenderCopy(ren, tex, NULL, NULL);
@@ -112,6 +131,15 @@ void SDLDevice::render(float delta) {
             renderable.height
         };
         SDL_RenderCopy(renderer, renderable.texture->getHandle(), NULL, &rect);
+        SDL_SetRenderDrawColor(renderer, 255, 0, 0, SDL_ALPHA_OPAQUE);
+        const int COUNT = 4;
+        SDL_Point points[COUNT] = {
+            {renderable.xPos, renderable.yPos},
+            {renderable.xPos + renderable.width, renderable.yPos},
+            {renderable.xPos + renderable.width, renderable.yPos + renderable.height},
+            {renderable.xPos, renderable.yPos + renderable.height}
+        };
+        SDL_RenderDrawLines(renderer, points, COUNT);
     }
     //Update the screen
     SDL_RenderPresent(renderer);
