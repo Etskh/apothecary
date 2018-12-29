@@ -96,6 +96,12 @@ public:
     }
 
     template<class ... Types>
+    void warning(const char* str, Types ... args) const {
+        String severity("WARN");
+        log(colourize(severity, Yellow), str, args...);
+    }
+
+    template<class ... Types>
     void error(const char* str, Types ... args) const {
         String severity("ERROR");
         log(colourize(severity, Red), str, args...);

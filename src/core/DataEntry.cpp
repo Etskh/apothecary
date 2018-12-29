@@ -1,6 +1,6 @@
 
 #include "DataEntry.hpp"
-
+#include "Logger.hpp"
 
 DataEntry::DataEntry() {
     // empty
@@ -10,7 +10,14 @@ const char* DataEntry::getString(const char* name) const {
     return textList.at(name).c_str();
 }
 double DataEntry::getNumber(const char* name) const {
-    return numberList.at(name);
+    try {
+        return numberList.at(name);
+    }
+    catch(std::out_of_range exception) {
+        Logger logger("CORE");
+        logger.error("Unknown key \"{}\"", name);
+        return 0;
+    }
 }
 
 void DataEntry::setString(const char* name, const char* val) {

@@ -4,6 +4,7 @@
 #include "Application.hpp"
 #include "scene/SceneNode.hpp"
 #include "Device.hpp"
+#include "Input.hpp"
 
 class ApothecaryApp: public Application {
 public:
@@ -15,6 +16,7 @@ public:
 private:
     Device::smrtptr device;
     SceneNode scene;
+    Input input;
 };
 
 

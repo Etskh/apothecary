@@ -1,4 +1,5 @@
 
+#include "../Input.hpp"
 #include "SDLDevice.hpp"
 #include "SDLFont.hpp"
 
@@ -35,14 +36,19 @@ bool SDLDevice::init(const DataEntry& config) {
     }
 
     logger.info("TODO: Print out graphics specs");
-
     if (TTF_Init() != 0) {
         logger.error("Unable to initialize TTF");
         return false;
     }
-
     logger.info("Initialized TTF fonts");
 
+    int imgFlags = IMG_INIT_PNG;
+    if( (IMG_Init(imgFlags) & imgFlags) != imgFlags ) {
+        // printf( "SDL_image could not initialize! SDL_image Error: %s\n", IMG_GetError() );
+        logger.error("Unable to load image loading");
+        return false;
+    }
+    logger.info("Initialized image loading");
 
     const char* title = config.getString("application title");
     int width = config.getNumber("application width");
@@ -76,28 +82,43 @@ bool SDLDevice::init(const DataEntry& config) {
     return true;
 }
 
+void SDLDevice::sendKeyEvent(SDL_Event& event, bool isPressed) {
+    event::EventData keyboardData;
+    auto keyevent = reinterpret_cast<SDL_KeyboardEvent*>(&event);
+    keyboardData.setNumber("code", keyevent->keysym.sym);
+
+    if( isPressed ) {
+        _app.send(event::INPUT_KEYDOWN, keyboardData);
+    }
+    else {
+        _app.send(event::INPUT_KEYUP, keyboardData);
+    }
+}
+
+
 int SDLDevice::run() {
     bool isRunning = true;
     float delta = 0.016 * 1000;
     SDL_Event event;
     while(isRunning) {
+        // Send the update event
         event::EventData updateData;
-        _app.send(event::Update, updateData);
-        /*
-        Input_MouseUp,
-        Input_MouseDown,
-        Input_MouseMove,
-        */
+        _app.send(event::UPDATE, updateData);
+
         while (SDL_PollEvent(&event)) {
             event::EventData mouseData;
 
             switch(event.type) {
             case SDL_MOUSEBUTTONDOWN:
-                _app.send(event::Input_MouseDown, mouseData);
+                _app.send(event::INPUT_MOUSEDOWN, mouseData);
                 break;
             case SDL_MOUSEBUTTONUP:
-                _app.send(event::Input_MouseUp, mouseData);
+                _app.send(event::INPUT_MOUSEUP, mouseData);
                 break;
+            case SDL_KEYDOWN:
+                sendKeyEvent(event, true); break;
+            case SDL_KEYUP:
+                sendKeyEvent(event, false); break;
             case SDL_QUIT:
                 isRunning = false;
                 break;
@@ -117,7 +138,6 @@ void SDLDevice::render(float delta) {
     SDL_RenderClear(renderer);
     //Draw the texture
     // SDL_RenderCopy(ren, tex, NULL, NULL);
-    //_renderList[0]->render(0, 0, 200, 80);
     for( auto it = _renderables.begin(); it != _renderables.end(); ++it) {
         SDLRenderable& renderable = it->second;
         if( !renderable.texture ) {
@@ -125,8 +145,8 @@ void SDLDevice::render(float delta) {
         }
         // SDL_QueryTexture(_texture, NULL, NULL, &texW, &texH);
         SDL_Rect rect = {
-            renderable.xPos,
-            renderable.yPos,
+            renderable.posX,
+            renderable.posY,
             renderable.width,
             renderable.height
         };
@@ -134,15 +154,16 @@ void SDLDevice::render(float delta) {
         SDL_SetRenderDrawColor(renderer, 255, 0, 0, SDL_ALPHA_OPAQUE);
         const int COUNT = 4;
         SDL_Point points[COUNT] = {
-            {renderable.xPos, renderable.yPos},
-            {renderable.xPos + renderable.width, renderable.yPos},
-            {renderable.xPos + renderable.width, renderable.yPos + renderable.height},
-            {renderable.xPos, renderable.yPos + renderable.height}
+            {renderable.posX, renderable.posY},
+            {renderable.posX + renderable.width, renderable.posY},
+            {renderable.posX + renderable.width, renderable.posY + renderable.height},
+            {renderable.posX, renderable.posY + renderable.height}
         };
         SDL_RenderDrawLines(renderer, points, COUNT);
     }
     //Update the screen
     SDL_RenderPresent(renderer);
+
     //Take a quick break after all that hard work
     SDL_Delay(delta);
 }
@@ -155,9 +176,60 @@ Font::smrtptr SDLDevice::createFont(const char* fontName) {
     return font;
 }
 
+Texture::smrtptr SDLDevice::createTexture(const char* path) {
+    auto screen = SDL_GetWindowSurface( window );
+    //The final optimized image
+    SDL_Surface* optimizedSurface = nullptr;
+    //Load image at specified path
+    SDL_Surface* loadedSurface = IMG_Load(path);
+    if( loadedSurface == nullptr ) {
+        logger.error("Unable to load image");
+        return Texture::smrtptr(nullptr);
+        // printf( "Unable to load image %s! SDL_image Error: %s\n", path.c_str(), IMG_GetError() );
+    }
+    //Convert surface to screen format
+    optimizedSurface = SDL_ConvertSurface(loadedSurface, screen->format, 0);
 
-Renderable SDLDevice::createRenderableTexture(
-    Texture::smrtptr tex, int x, int y, int w, int h) {
-    SDLRenderable renderable = SDLRenderable(tex, x, y, w, h);
+    //Get rid of old loaded surface
+    SDL_FreeSurface(loadedSurface);
+    if( optimizedSurface == nullptr ) {
+        logger.error("Unable to optimize the surface");
+        return Texture::smrtptr(nullptr);
+        // printf( "Unable to optimize image %s! SDL Error: %s\n", path.c_str(), SDL_GetError() );
+    }
+
+    // Create the texture from the surface
+    auto newTexture = SDL_CreateTextureFromSurface(renderer, optimizedSurface);
+
+    //Get rid of old loaded surface
+    SDL_FreeSurface(optimizedSurface);
+    if( newTexture == nullptr ) {
+        logger.error("Could not create texture from surface");
+        return Texture::smrtptr(nullptr);
+        // printf( "Unable to create texture from %s! SDL Error: %s\n", path.c_str(), SDL_GetError() );
+    }
+
+    logger.info("Texture created {}", path);
+    return Texture::smrtptr(new SDLTexture(newTexture));
+}
+
+
+Renderable SDLDevice::createRenderableTexture(Texture::smrtptr tex, const Rect2d& rect) {
+    SDLRenderable renderable = SDLRenderable(tex,
+        static_cast<int>(rect.posX),
+        static_cast<int>(rect.posY),
+        static_cast<int>(rect.width),
+        static_cast<int>(rect.height)
+    );
     return createRenderable(renderable);
+}
+
+bool SDLDevice::updateRenderableTexture(Renderable texture, const Rect2d& rect) {
+    SDLRenderable& renderable = _renderables.at(texture);
+    renderable.posX = static_cast<int>(rect.posX);
+    renderable.posY = static_cast<int>(rect.posY);
+    renderable.width = static_cast<int>(rect.width);
+    renderable.height = static_cast<int>(rect.height);
+
+    return true;
 }

@@ -2,8 +2,8 @@
 #define _INCLUDE_MATH_HPP
 
 struct Rect2d {
-    float xPos;
-    float yPos;
+    float posX;
+    float posY;
     float width;
     float height;
 };

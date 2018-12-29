@@ -2,19 +2,6 @@
 
 using namespace event;
 
-const char* etostr(Type eventType) {
-    static const char* names[] = {
-        "Init",
-        "Update",
-        "Kill",
-        "Input_MouseUp",
-        "Input_MouseDown",
-        "Input_MouseMove",
-    };
-    return names[eventType];
-}
-
-
 Dispatcher::Dispatcher(const String& name)
     : logger(name)
 {
@@ -26,7 +13,7 @@ Dispatcher::~Dispatcher() {
 
 void Dispatcher::send(Type eventType, const EventData& data) const {
     auto listener = _listeners.begin();
-    if( eventType != Update) {
+    if( eventType != UPDATE) {
         logger.debug("Dispatching event {}", etostr(eventType));
     }
 

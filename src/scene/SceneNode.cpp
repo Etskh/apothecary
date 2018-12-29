@@ -17,7 +17,7 @@ SceneNode::SceneNode(Application& app, const String& name)
     , _id(createGuid())
 {
     auto onUpdate = std::bind(&SceneNode::onUpdate, this, std::placeholders::_1, std::placeholders::_2);
-    _app.addListener(String(_id), event::Update, onUpdate);
+    _app.addListener(String(_id), event::UPDATE, onUpdate);
 }
 
 SceneNode::~SceneNode() {

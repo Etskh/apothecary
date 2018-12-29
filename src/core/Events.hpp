@@ -8,16 +8,9 @@
 #include "DataEntry.hpp"
 #include "Logger.hpp"
 
-namespace event {
+#include "_gen_EventTypes.hpp"
 
-enum Type {
-    Init,
-    Update,
-    Kill,
-    Input_MouseUp,
-    Input_MouseDown,
-    Input_MouseMove,
-};
+namespace event {
 
 typedef DataEntry EventData;
 

@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 import os
-
+from scripts import event
 
 def get_files_by_ext(path, ext):
     file_list = []
@@ -31,30 +31,33 @@ def make_object(filepath, headers):
     ])
 
 
-def generate_makefile():
+def generate_makefile(extra_rules):
     src_dir = 'src'
     headers = ' '.join(get_headers(src_dir))
-    # print(headers)
     source_output = '\n'.join([ make_object(x, headers) for x in get_sources(src_dir) ])
     all_objects = ' '.join([ objectify(x, 'src', 'obj') for x in get_sources(src_dir)])
     real_output = f"""
     # This file is generated please do not modify!
-LIBS=-l SDL2 -l SDL2_ttf
+LIBS=-l SDL2 -l SDL2_ttf -l SDL2_image
 CC=clang++
 CPPFLAGS=-Wall -std=c++0x -g
 
 apothecary: {all_objects}
 \t$(CC) -o $@ $^ $(LIBS)
 
+{extra_rules}
+
 {source_output}
 """
     return real_output
 
 
-def output_makefile():
-    makefile_content = generate_makefile()
+def main():
+    event_rule = event.generate()
+    makefile_content = generate_makefile(event_rule)
     with open('Makefile', 'w') as makefile:
         makefile.write(makefile_content)
 
 
-output_makefile()
+if __name__ == '__main__':
+    main()

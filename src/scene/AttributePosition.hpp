@@ -2,6 +2,8 @@
 #define _INCLUDE_ATTRIBUTEPOSITION_HPP
 
 #include "Attribute.hpp"
+#include "../core/Math.hpp"
+#include "../core/Logger.hpp"
 
 class AttributePosition: public Attribute {
 public:
@@ -25,24 +27,32 @@ public:
 	virtual void onInit();
 
 	void set(float x, float y, float w, float h) {
-		xPos = x;
-		yPos = y;
+		posX = x;
+		posY = y;
 		width = w;
 		height = h;
-
-		isDirty = true;
 	}
 
-	inline int getX() const { return static_cast<int>(xPos); }
-	inline int getY() const { return static_cast<int>(yPos); }
+	inline int getX() const { return static_cast<int>(posX); }
+	inline int getY() const { return static_cast<int>(posY); }
 	inline int getWidth() const { return static_cast<int>(width); }
 	inline int getHeight() const { return static_cast<int>(height); }
 
+	inline bool getRect(Rect2d* out) const {
+		if( out == nullptr ) {
+			return false;
+		}
+		out->posX = posX;
+		out->posY = posY;
+		out->width = width;
+		out->height = height;
+		return true;
+	}
+
 private:
-	bool isDirty;
 	// Anchor anchor;
-	float xPos;
-	float yPos;
+	float posX;
+	float posY;
 	float width;
 	float height;
 };

@@ -8,8 +8,8 @@
 struct SDLRenderable {
     std::shared_ptr<SDLTexture> texture;
     // absolute values
-    int xPos;
-    int yPos;
+    int posX;
+    int posY;
     int width;
     int height;
 

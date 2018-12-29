@@ -23,24 +23,29 @@ AttributeImage::~AttributeImage()
 }
 
 void AttributeImage::onInit() {
-    // get x and y
-    // and w and h
+    Rect2d rect;
+    Logger logger("AttributeImage");
+
     _posAttribute = getOrCreateSibling<AttributePosition>();
-    _renderable = _device->createRenderableTexture(
-        _texture,
-        _posAttribute->getX(),
-        _posAttribute->getY(),
-        _posAttribute->getWidth(),
-        _posAttribute->getHeight()
-    );
+    if( !_posAttribute->getRect(&rect)) {
+        logger.warning("Could not get the rect for the _posAttribute");
+        return;
+    }
+
+    _renderable = _device->createRenderableTexture(_texture, rect);
+    if( !_renderable ) {
+        logger.warning("Couldn't get the renderable");
+        return;
+    }
 }
 
 void AttributeImage::onUpdate(float delta) {
-    //Rect2d rect;
-    //_posAttribute->getRect(&rect);
-    // device->updateRenderableTexture(
-    //  _texture,
-    //  rect
-    // );
+    Rect2d rect;
+    Logger logger("AttributeImage");
+    if( !_posAttribute->getRect(&rect)) {
+        logger.warning("Couldnt not get the rect from the _posAttribute");
+        return;
+    }
 
+    _device->updateRenderableTexture(_renderable, rect);
 }

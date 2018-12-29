@@ -23,9 +23,12 @@ public:
     virtual void render(float delta);
 
     virtual Font::smrtptr createFont(const char* fontName);
+    virtual Texture::smrtptr createTexture(const char* path);
 
-    virtual Renderable createRenderableTexture(
-        Texture::smrtptr tex, int x, int y, int w, int h);
+    virtual Renderable createRenderableTexture (Texture::smrtptr tex, const Rect2d& rect);
+    virtual bool updateRenderableTexture (Renderable texture, const Rect2d& rect);
+
+    void sendKeyEvent(SDL_Event& event, bool isPressed);
 
 private:
     std::vector<Font::smrtptr> fontResources;
