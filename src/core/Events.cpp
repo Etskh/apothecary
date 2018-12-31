@@ -1,9 +1,11 @@
 #include "Events.hpp"
 
+#include <algorithm>
+
 using namespace event;
 
 Dispatcher::Dispatcher(const String& name)
-    : logger(name)
+    : logger(name.c_str())
 {
     // empty
 }
@@ -35,27 +37,31 @@ void Dispatcher::addListener(const String& name, Type eventType, Callback callba
 }
 
 bool Dispatcher::removeListener(const String& name, Type eventType) {
-    auto listener = _listeners.begin();
-    while( listener != _listeners.end() ) {
-        // TODO: Use crc32 for string comparison
-        if( listener->name == name ) {
-            _listeners.remove(*listener);
-            return true;
-        }
-        listener++;
+    auto finder = [name] (const EventListener& listener) {
+        return listener.name == name;
+    };
+    auto found = std::find_if(_listeners.begin(), _listeners.end(), finder);
+    if( found == _listeners.end() ) {
+        logger.error("Could not remove listeners");
+        return false;
     }
-    return false;
+    logger.info("Removed listener");
+    _listeners.remove(*found);
+    return true;
 }
 
-bool Dispatcher::removeAllListeners(const String& name) {
-    auto listener = _listeners.begin();
-    logger.info("Removing listeners from [id:{}]", name.c_str());
-    while( listener != _listeners.end() ) {
-        // TODO: Use crc32 for string comparison
-        if( listener->name == name ) {
-            _listeners.remove(*listener);
-        }
-        listener++;
+size_t Dispatcher::removeAllListeners(const String& name) {
+    size_t sum = 0;
+    auto finder = [name] (const EventListener& listener) {
+        return listener.name == name;
+    };
+    // Keep looking until we don't find anything
+    std::list<EventListener>::iterator found;
+    while((found = std::find_if(_listeners.begin(), _listeners.end(), finder))
+        != _listeners.end()) {
+        _listeners.remove(*found);
+        sum += 1;
     }
-    return true;
+    logger.info("Removed {} listeners", stringify(sum));
+    return sum;
 }

@@ -82,10 +82,18 @@ bool SDLDevice::init(const DataEntry& config) {
     return true;
 }
 
+
 void SDLDevice::sendKeyEvent(SDL_Event& event, bool isPressed) {
     event::EventData keyboardData;
     auto keyevent = reinterpret_cast<SDL_KeyboardEvent*>(&event);
-    keyboardData.setNumber("code", keyevent->keysym.sym);
+
+    // Temporarily disable repeat keys
+    if( keyevent->repeat != 0 ) {
+        return;
+    }
+
+    // Add the event key
+    keyboardData.setNumber("code", keyevent->keysym.scancode);
 
     if( isPressed ) {
         _app.send(event::INPUT_KEYDOWN, keyboardData);

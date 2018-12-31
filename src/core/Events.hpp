@@ -38,7 +38,6 @@ struct EventListener {
 
 class Dispatcher {
 public:
-
     typedef std::list<Callback> CallbackList;
 
     Dispatcher(const String& name);
@@ -48,7 +47,7 @@ public:
 
     void addListener(const String& name, Type eventType, Callback callback);
     bool removeListener(const String& name, Type eventType);
-    bool removeAllListeners(const String& name);
+    size_t removeAllListeners(const String& name);
 
 public:
     Logger logger;

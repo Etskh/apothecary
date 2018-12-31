@@ -4,6 +4,7 @@
 
 #include "String.hpp"
 
+/*
 String::String() {
     // empty
 }
@@ -49,5 +50,7 @@ String& String::operator +=(const char* str) {
 
 
 const char* String::c_str() const {
+    printf("Returning string %s", value.c_str());
     return value.c_str();
 }
+*/

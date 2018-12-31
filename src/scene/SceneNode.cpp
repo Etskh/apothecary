@@ -17,11 +17,11 @@ SceneNode::SceneNode(Application& app, const String& name)
     , _id(createGuid())
 {
     auto onUpdate = std::bind(&SceneNode::onUpdate, this, std::placeholders::_1, std::placeholders::_2);
-    _app.addListener(String(_id), event::UPDATE, onUpdate);
+    _app.addListener(stringify(_id), event::UPDATE, onUpdate);
 }
 
 SceneNode::~SceneNode() {
-    _app.removeAllListeners(getId());
+    _app.removeAllListeners(stringify(getId()));
 }
 
 SceneNode::Guid SceneNode::createGuid() {
@@ -69,11 +69,15 @@ void SceneNode::print_r(String& nodeText, size_t depth, bool isLastChild) const 
     const char* skip = "| ";
     const char* none = "  ";
     const size_t step = 2;
-    String padding = String().pad(depth);
+    String padding = "  ";
+    //String padding = String().pad(depth);
     String sticks = isLastChild ? first : (depth == 0 ? first : middle);
-    nodeText += String("\n{}{}{}").format(padding, sticks, name);
+    auto mainTemplateStr = String("\n{}{}{}");
+    nodeText += format(mainTemplateStr, padding, sticks, name);
     for( auto attribute = _attributes.begin(); attribute != _attributes.end(); attribute++) {
-        nodeText += String("\n{}{}<attribute:{}>").format(
+        auto attrString = String("\n{}{}<attribute:{}>");
+        nodeText += format(
+            attrString,
             padding,
             isLastChild ? none : skip,
             etostr((*attribute)->getType())

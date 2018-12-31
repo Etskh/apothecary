@@ -7,11 +7,11 @@ SDLFont::SDLFont(SDL_Renderer* renderer, const char* fontName)
   , _renderer(renderer)
   , font(nullptr)
   , message(nullptr)
-  , logger(String("SDLFont:") + fontName)
+  , logger(fontName)
 {
     font = TTF_OpenFont(fontName, 32);
     if (font == nullptr){
-        logger.error(String("Could not open file") + getName());
+        logger.error("Could not open file", getName());
     }
 }
 

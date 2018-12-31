@@ -49,6 +49,11 @@ public:
 		return true;
 	}
 
+	inline void moveBy (float x, float y) {
+		posX += x;
+		posY += y;
+	}
+
 private:
 	// Anchor anchor;
 	float posX;

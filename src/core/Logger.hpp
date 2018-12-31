@@ -69,10 +69,10 @@ public:
     void log(const String& severity, const char* str, Types ... args) const {
         String appString("{} [{}] ");
         String nameString(name);
-        appString.format(severity.c_str(), colourize(nameString, Grey).c_str());
+        format(appString, severity.c_str(), colourize(nameString, Grey).c_str());
 
         String userString(str);
-        userString.format(args...);
+        format(userString, args...);
 
         printf("%s%s\n", appString.c_str(), userString.c_str());
     }
