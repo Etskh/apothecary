@@ -107,6 +107,10 @@ public:
         log(colourize(severity, Red), str, args...);
     }
 
+    inline const char* getName() const {
+        return name.c_str();
+    }
+
 private:
     String name;
 };

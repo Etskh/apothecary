@@ -4,6 +4,8 @@
 #include "Application.hpp"
 
 enum KeyCode {
+    KEY_SPACE = 44,
+
     KEY_LEFT = 80,
     KEY_UP = 82,
     KEY_RIGHT = 79,
@@ -11,6 +13,8 @@ enum KeyCode {
 
     KEY_COUNT= 255,
 };
+
+const char* etostr(KeyCode code);
 
 struct KeyAxis {
     KeyCode neg;
@@ -33,11 +37,15 @@ public:
     void onKeyDown(event::Type type, event::EventData data);
     void onKeyUp(event::Type type, event::EventData data);
 
+    // Debug
+    void print_r(String& output);
+
 private:
     Application& _app;
     String _id;
+    std::map<std::string, KeyCode> _buttonMap;
     std::map<std::string, KeyAxis> _keymap;
-    bool _keys[255];
+    bool _keys[KEY_COUNT];
 };
 
 

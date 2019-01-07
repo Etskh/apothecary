@@ -24,11 +24,6 @@ SceneNode::~SceneNode() {
     _app.removeAllListeners(stringify(getId()));
 }
 
-SceneNode::Guid SceneNode::createGuid() {
-    static Guid guid = 0;
-    return ++guid;
-}
-
 void SceneNode::onUpdate(event::Type type, event::EventData data) {
     // TODO: get this from the eventData
     float delta = 0.016;

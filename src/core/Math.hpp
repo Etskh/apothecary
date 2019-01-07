@@ -8,5 +8,20 @@ struct Rect2d {
     float height;
 };
 
+struct Vector2 {
+    float x;
+    float y;
+
+    Vector2(float _x, float _y)
+        : x(_x)
+        , y(_y)
+    {
+        // empty
+    }
+};
+
+
+bool isCloseTo(const Vector2& pos1, const Vector2& pos2);
+
 
 #endif /* end of include guard: _INCLUDE_MATH_HPP */

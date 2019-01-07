@@ -142,7 +142,8 @@ int SDLDevice::run() {
 
 void SDLDevice::render(float delta) {
     //First clear the renderer
-    SDL_SetRenderDrawColor(renderer, 30, 30, 60, SDL_ALPHA_OPAQUE);
+
+    SDL_SetRenderDrawColor(renderer, 97, 204, 110, SDL_ALPHA_OPAQUE);
     SDL_RenderClear(renderer);
     //Draw the texture
     // SDL_RenderCopy(ren, tex, NULL, NULL);
@@ -151,6 +152,10 @@ void SDLDevice::render(float delta) {
         if( !renderable.texture ) {
             continue;
         }
+        if( renderable.isHidden ) {
+            continue;
+        }
+
         // SDL_QueryTexture(_texture, NULL, NULL, &texW, &texH);
         SDL_Rect rect = {
             renderable.posX,
@@ -195,6 +200,7 @@ Texture::smrtptr SDLDevice::createTexture(const char* path) {
         return Texture::smrtptr(nullptr);
         // printf( "Unable to load image %s! SDL_image Error: %s\n", path.c_str(), IMG_GetError() );
     }
+
     //Convert surface to screen format
     optimizedSurface = SDL_ConvertSurface(loadedSurface, screen->format, 0);
 
@@ -232,12 +238,12 @@ Renderable SDLDevice::createRenderableTexture(Texture::smrtptr tex, const Rect2d
     return createRenderable(renderable);
 }
 
-bool SDLDevice::updateRenderableTexture(Renderable texture, const Rect2d& rect) {
+bool SDLDevice::updateRenderableTexture(Renderable texture, const Rect2d& rect, bool isHidden) {
     SDLRenderable& renderable = _renderables.at(texture);
     renderable.posX = static_cast<int>(rect.posX);
     renderable.posY = static_cast<int>(rect.posY);
     renderable.width = static_cast<int>(rect.width);
     renderable.height = static_cast<int>(rect.height);
-
+    renderable.isHidden = isHidden;
     return true;
 }

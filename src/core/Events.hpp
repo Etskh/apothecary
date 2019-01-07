@@ -49,6 +49,10 @@ public:
     bool removeListener(const String& name, Type eventType);
     size_t removeAllListeners(const String& name);
 
+    inline const char* getName() const {
+        return logger.getName();
+    }
+
 public:
     Logger logger;
 

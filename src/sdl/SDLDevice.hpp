@@ -26,7 +26,7 @@ public:
     virtual Texture::smrtptr createTexture(const char* path);
 
     virtual Renderable createRenderableTexture (Texture::smrtptr tex, const Rect2d& rect);
-    virtual bool updateRenderableTexture (Renderable texture, const Rect2d& rect);
+    virtual bool updateRenderableTexture (Renderable texture, const Rect2d& rect, bool isHidden);
 
     void sendKeyEvent(SDL_Event& event, bool isPressed);
 

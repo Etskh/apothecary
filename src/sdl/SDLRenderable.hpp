@@ -12,6 +12,7 @@ struct SDLRenderable {
     int posY;
     int width;
     int height;
+    bool isHidden;
 
     SDLRenderable(Texture::smrtptr tex, int x, int y, int w, int h);
 };

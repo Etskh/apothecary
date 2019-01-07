@@ -6,6 +6,7 @@
 #include "core/Logger.hpp"
 #include "core/DataEntry.hpp"
 #include "core/Events.hpp"
+#include "core/Guid.hpp"
 
 typedef unsigned int uint32;
 typedef unsigned char uint8;

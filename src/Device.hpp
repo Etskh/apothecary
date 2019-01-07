@@ -26,7 +26,7 @@ public:
     virtual Texture::smrtptr createTexture(const char* path) = 0;
 
     virtual Renderable createRenderableTexture (Texture::smrtptr tex, const Rect2d& rect) = 0;
-    virtual bool updateRenderableTexture (Renderable texture, const Rect2d& rect) = 0;
+    virtual bool updateRenderableTexture (Renderable texture, const Rect2d& rect, bool isHidden) = 0;
     virtual bool destroyRenderable (Renderable renderable) = 0;
 
 

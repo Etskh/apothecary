@@ -11,11 +11,19 @@ public:
     ApothecaryApp();
     virtual ~ApothecaryApp();
 
+    // Lifecycle
     virtual int run();
+
+    // Event hooks
+    void onUpdate(event::Type type, event::EventData data);
+
+    // Mutators
+    virtual Device::smrtptr getDevice();
 
 private:
     Device::smrtptr device;
     SceneNode scene;
+    SceneNode::smrtptr player;
     Input input;
 };
 

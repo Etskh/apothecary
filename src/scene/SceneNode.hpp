@@ -1,5 +1,5 @@
-#ifndef _INCLUDE_SCENE_HPP
-#define _INCLUDE_SCENE_HPP
+#ifndef _INCLUDE_SCENENODE_HPP
+#define _INCLUDE_SCENENODE_HPP
 
 #include <memory>
 #include <vector>
@@ -11,15 +11,12 @@
 
 class SceneNode {
 public:
-    typedef unsigned int Guid;
-public:
     typedef std::shared_ptr<SceneNode> smrtptr;
 public:
     SceneNode(Application& app);
     SceneNode(Application& app, const String& name);
     virtual ~SceneNode();
 
-    static Guid createGuid();
     inline Guid getId() const { return _id; }
 
     void onUpdate(event::Type type, event::EventData data);
@@ -65,4 +62,4 @@ std::shared_ptr<A> SceneNode::get() {
 }
 
 
-#endif /* end of include guard: _INCLUDE_SCENE_HPP */
+#endif /* end of include guard: _INCLUDE_SCENENODE_HPP */

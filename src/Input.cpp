@@ -1,6 +1,20 @@
 
 #include "Input.hpp"
 
+const char* etostr(KeyCode code) {
+    switch(code) {
+    case KEY_UP: return "KEY_UP";
+    case KEY_LEFT: return "KEY_LEFT";
+    case KEY_RIGHT: return "KEY_RIGHT";
+    case KEY_DOWN: return "KEY_DOWN";
+    case KEY_SPACE: return "KEY_SPACE";
+    default:
+        Logger logger("Input");
+        logger.error("Unknown string for code {}", stringify(code));
+        return "Unknown";
+    }
+}
+
 
 Input::Input(Application& app)
     : _app (app)
@@ -27,7 +41,7 @@ void Input::setAxisMap(const String& name, KeyCode neg, KeyCode pos) {
 }
 
 void Input::setButtonMap(const String& name, KeyCode code) {
-    // TODO: make me!
+    _buttonMap.insert( std::pair<std::string, KeyCode>(name.c_str(), code));
 }
 
 float Input::getAxis(const String& name) const {
@@ -49,14 +63,22 @@ float Input::getAxis(const String& name) const {
 }
 
 bool Input::getButton(const String& name) const {
-    // TODO: make me!
+    try {
+        KeyCode code = _buttonMap.at(name.c_str());
+        return _keys[code];
+    }
+    catch (std::out_of_range exception) {
+        Logger logger("Input");
+        logger.error("Unknown button keymap \"{}\"", name);
+        return true;
+    }
     return false;
 }
 
 void Input::onKeyDown(event::Type type, event::EventData data) {
     Logger logger("Input");
     KeyCode code = static_cast<KeyCode>(data.getNumber("code"));
-    logger.info("Recieved keydown {}", stringify(code));
+    logger.debug("Recieved keydown {}", stringify(code));
     if( code > KEY_COUNT) {
         logger.error("Code larger than allocated key block {}", stringify(code));
         return;
@@ -72,4 +94,24 @@ void Input::onKeyUp(event::Type type, event::EventData data) {
         return;
     }
     _keys[code] = false;
+}
+
+void Input::print_r(String& output) {
+    auto axis = _keymap.begin();
+    while( axis != _keymap.end()) {
+        output += String("\n");
+        output += String(" [") + axis->first + "]: ";
+        output += String(etostr(axis->second.neg));
+        output += " and ";
+        output += String(etostr(axis->second.pos));
+        axis++;
+    }
+
+    auto button = _buttonMap.begin();
+    while( button != _buttonMap.end()) {
+        output += String("\n");
+        output += String(" [") + button->first + "]: ";
+        output += String(etostr(button->second));
+        button++;
+    }
 }

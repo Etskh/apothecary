@@ -1,7 +1,10 @@
+
+# From the build process
 obj
 Makefile
 apothecary
+_gen_*
+
+# Python scripts
 __pycache__
 *.pyc
-_gen_*
-events.md

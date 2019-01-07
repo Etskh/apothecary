@@ -10,6 +10,7 @@ AttributeImage::AttributeImage(Texture::smrtptr texture, Device::smrtptr device)
     , _texture(texture)
     , _device(device)
     , _renderable(0)
+    , _isHidden(false)
 {
     // empty
 }
@@ -47,5 +48,13 @@ void AttributeImage::onUpdate(float delta) {
         return;
     }
 
-    _device->updateRenderableTexture(_renderable, rect);
+    _device->updateRenderableTexture(_renderable, rect, _isHidden);
+}
+
+void AttributeImage::show() {
+    _isHidden = false;
+}
+
+void AttributeImage::hide() {
+    _isHidden = true;
 }

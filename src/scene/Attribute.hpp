@@ -14,6 +14,7 @@ enum AttributeType {
     ATTRIBUTETYPE_TEXT,
     ATTRIBUTETYPE_IMAGE,
     ATTRIBUTETYPE_POSITION,
+    ATTRIBUTETYPE_INTERACTIVE,
 };
 
 inline const char* etostr(AttributeType t) {
@@ -22,6 +23,7 @@ inline const char* etostr(AttributeType t) {
 		"text",
 		"image",
 		"position",
+        "interactive",
 	};
 	return str[t];
 }
@@ -44,11 +46,17 @@ public:
 
     template<class A, class... Args>
     std::shared_ptr<A> getOrCreateSibling(Args ...args);
+    template<class A>
+    std::shared_ptr<A> getSibling();
 
     // Lifecycle
     virtual void onInit() = 0;
     virtual void onUpdate(float delta) {}
     virtual void onKill() {}
+
+    // Serialization
+    // virtual bool save(String& output);
+    // virtual bool load(const String& input);
 
 private:
     AttributeType _type;
@@ -69,6 +77,18 @@ std::shared_ptr<A> Attribute::getOrCreateSibling(Args ...args) {
 
         attribute = Attribute::smrtptr(new A(args...));
         _parentAdder(attribute);
+    }
+    return std::dynamic_pointer_cast<A>(attribute);
+}
+
+template<class A>
+std::shared_ptr<A> Attribute::getSibling() {
+    Logger logger("Attribute");
+    Attribute::smrtptr attribute = _parentGetter(A::type);
+    logger.debug("Looking for attribute: {}", etostr(A::type));
+
+    if( !attribute ) {
+        logger.error("Cannot find one");
     }
     return std::dynamic_pointer_cast<A>(attribute);
 }
