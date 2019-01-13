@@ -49,12 +49,12 @@ int ApothecaryApp::run() {
     // Load the ingredientLibrary
     loadIngredients();
 
+    /*
     auto title = SceneNode::Create(*this, "title");
     title->get<AttributePosition>()->set(0.f, 0.f, 150.f, 30.0f);
     title->createAttribute<AttributeText>("The Apothecary", font, device);
     scene.addChild(title);
 
-    /*
     auto button = SceneNode::Create(*this, "button");
     button->createAttribute<AttributeText>("Start", font, device);
     button->get<AttributePosition>()->set(0.f, 200.f, 90.f, 30.f);

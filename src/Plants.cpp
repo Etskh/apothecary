@@ -5,11 +5,14 @@
 #include "scene/AttributePlant.hpp"
 #include "Plants.hpp"
 
+
+
+
 SceneNode::smrtptr CreatePlant(Application& app, const char* name, float x, float y) {
     auto grass = SceneNode::Create(app, stringify(createGuid()));
 
     Device::smrtptr device = app.getDevice();
-    Texture::smrtptr herbTexture = device->createTexture("./data/dew-herb.png");
+    Texture::smrtptr herbTexture = device->createTexture("./data/ember-flower.png");
 
     Ingredient plant;
     plant.name = "Dew Herb";
