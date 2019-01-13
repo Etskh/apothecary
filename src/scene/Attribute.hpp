@@ -6,7 +6,7 @@
 #include <functional>
 
 
-#include "../core/Logger.hpp"
+#include "../Core.hpp"
 
 
 enum AttributeType {
@@ -15,6 +15,8 @@ enum AttributeType {
     ATTRIBUTETYPE_IMAGE,
     ATTRIBUTETYPE_POSITION,
     ATTRIBUTETYPE_INTERACTIVE,
+    ATTRIBUTETYPE_PLAYER,
+    ATTRIBUTETYPE_PLANT,
 };
 
 inline const char* etostr(AttributeType t) {
@@ -49,6 +51,8 @@ public:
     template<class A>
     std::shared_ptr<A> getSibling();
 
+    inline Guid getId() const { return _id; }
+
     // Lifecycle
     virtual void onInit() = 0;
     virtual void onUpdate(float delta) {}
@@ -59,6 +63,7 @@ public:
     // virtual bool load(const String& input);
 
 private:
+    Guid _id;
     AttributeType _type;
     ParentGetter _parentGetter;
     ParentAdder _parentAdder;

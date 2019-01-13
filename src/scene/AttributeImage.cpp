@@ -11,6 +11,7 @@ AttributeImage::AttributeImage(Texture::smrtptr texture, Device::smrtptr device)
     , _device(device)
     , _renderable(0)
     , _isHidden(false)
+    , _anchor(ANCHOR_TOP_LEFT)
 {
     // empty
 }
@@ -48,7 +49,18 @@ void AttributeImage::onUpdate(float delta) {
         return;
     }
 
+    // Offset the rect by the anchor
+    if( _anchor == ANCHOR_BOT_CENTRE ) {
+        rect.posX -= rect.width / 2;
+        rect.posY -= rect.height;
+    }
+
     _device->updateRenderableTexture(_renderable, rect, _isHidden);
+}
+
+
+void AttributeImage::setAnchor(Anchor anchor) {
+    _anchor = anchor;
 }
 
 void AttributeImage::show() {

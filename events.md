@@ -19,3 +19,6 @@ app.start
 app.move
 app.action
 app.interact
+
+# Inventory actions
+inventory.add

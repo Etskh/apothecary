@@ -8,18 +8,6 @@
 class AttributePosition: public Attribute {
 public:
 	static AttributeType type;
-
-	/* enum Anchor {
-		ANCHOR_TOP_LEFT,
-		ANCHOR_TOP_CENTRE,
-		ANCHOR_TOP_RIGHT,
-		ANCHOR_MID_LEFT,
-		ANCHOR_MID_CENTRE,
-		ANCHOR_MID_RIGHT,
-		ANCHOR_BOT_LEFT,
-		ANCHOR_BOT_CENTRE,
-		ANCHOR_BOT_RIGHT,
-	}; */
 public:
     AttributePosition();
     virtual ~AttributePosition();

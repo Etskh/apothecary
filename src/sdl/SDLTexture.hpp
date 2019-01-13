@@ -8,7 +8,7 @@
 
 class SDLTexture: public Texture {
 public:
-    SDLTexture(SDL_Texture* texture);
+    SDLTexture(const char* path, SDL_Texture* texture);
     virtual ~SDLTexture();
 
     inline SDL_Texture* getHandle() const { return _texture; }

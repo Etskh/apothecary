@@ -2,8 +2,8 @@
 #include "SDLTexture.hpp"
 
 
-SDLTexture::SDLTexture(SDL_Texture* texture)
-    : Texture()
+SDLTexture::SDLTexture(const char* path, SDL_Texture* texture)
+    : Texture(path)
     , _texture(texture)
 {
     logger.info("Texture created");

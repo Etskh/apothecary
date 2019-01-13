@@ -4,6 +4,7 @@
 Attribute::Attribute(AttributeType type)
     : _type(type)
     , _parentGetter(nullptr)
+    , _id(createGuid())
 {
     // empty
 }

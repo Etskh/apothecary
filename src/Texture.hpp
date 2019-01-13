@@ -3,15 +3,19 @@
 
 #include <memory>
 
+#include "core/String.hpp"
 #include "core/Logger.hpp"
 
 class Texture {
 public:
     typedef std::shared_ptr<Texture> smrtptr;
-    Texture();
+    Texture(const char* path);
     virtual ~Texture();
 
+    inline const char* getPath() const { return _path.c_str(); }
+
 protected:
+    String _path;
     static Logger logger;
 };
 

@@ -45,7 +45,7 @@ Texture::smrtptr SDLFont::createTexture(const String& phrase) {
 
     // Create the texture out of the surface
     SDL_Texture* textMessage = SDL_CreateTextureFromSurface(_renderer, message);
-    auto texture = Texture::smrtptr(new SDLTexture(textMessage));
+    auto texture = Texture::smrtptr(new SDLTexture(phrase.c_str(), textMessage));
 
     return texture;
 }

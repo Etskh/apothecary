@@ -141,12 +141,12 @@ int SDLDevice::run() {
 
 
 void SDLDevice::render(float delta) {
-    //First clear the renderer
 
-    SDL_SetRenderDrawColor(renderer, 97, 204, 110, SDL_ALPHA_OPAQUE);
+    SDL_SetRenderDrawColor(renderer, 30, 100, 50, 0xFF);
+    SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
     SDL_RenderClear(renderer);
-    //Draw the texture
-    // SDL_RenderCopy(ren, tex, NULL, NULL);
+
+    // Draw all of the renderable objecst
     for( auto it = _renderables.begin(); it != _renderables.end(); ++it) {
         SDLRenderable& renderable = it->second;
         if( !renderable.texture ) {
@@ -164,6 +164,9 @@ void SDLDevice::render(float delta) {
             renderable.height
         };
         SDL_RenderCopy(renderer, renderable.texture->getHandle(), NULL, &rect);
+
+        // This is debug only
+
         SDL_SetRenderDrawColor(renderer, 255, 0, 0, SDL_ALPHA_OPAQUE);
         const int COUNT = 4;
         SDL_Point points[COUNT] = {
@@ -173,6 +176,10 @@ void SDLDevice::render(float delta) {
             {renderable.posX, renderable.posY + renderable.height}
         };
         SDL_RenderDrawLines(renderer, points, COUNT);
+        // Draw the point at the origin
+        SDL_SetRenderDrawColor(renderer, 100, 100, 255, SDL_ALPHA_OPAQUE);
+        SDL_RenderDrawPoint(renderer, renderable.posX, renderable.posY);
+
     }
     //Update the screen
     SDL_RenderPresent(renderer);
@@ -198,33 +205,41 @@ Texture::smrtptr SDLDevice::createTexture(const char* path) {
     if( loadedSurface == nullptr ) {
         logger.error("Unable to load image");
         return Texture::smrtptr(nullptr);
-        // printf( "Unable to load image %s! SDL_image Error: %s\n", path.c_str(), IMG_GetError() );
     }
 
     //Convert surface to screen format
+    SDL_SetColorKey(loadedSurface, SDL_RLEACCEL, loadedSurface->format->Amask);
+    //SDL_SetSurfaceBlendMode(loadedSurface, SDL_BLENDMODE_BLEND);
     optimizedSurface = SDL_ConvertSurface(loadedSurface, screen->format, 0);
+    ///SDL_SetSurfaceBlendMode(optimizedSurface, SDL_BLENDMODE_BLEND);
 
     //Get rid of old loaded surface
     SDL_FreeSurface(loadedSurface);
     if( optimizedSurface == nullptr ) {
         logger.error("Unable to optimize the surface");
         return Texture::smrtptr(nullptr);
-        // printf( "Unable to optimize image %s! SDL Error: %s\n", path.c_str(), SDL_GetError() );
     }
 
     // Create the texture from the surface
     auto newTexture = SDL_CreateTextureFromSurface(renderer, optimizedSurface);
+    {
+        Uint32 textureFormat;
+        SDL_QueryTexture(newTexture, &textureFormat, NULL, NULL, NULL);
+        printf("texture format: %s\n", SDL_GetPixelFormatName(textureFormat));
+    }
 
-    //Get rid of old loaded surface
+    // Get rid of old loaded surface
     SDL_FreeSurface(optimizedSurface);
     if( newTexture == nullptr ) {
         logger.error("Could not create texture from surface");
         return Texture::smrtptr(nullptr);
-        // printf( "Unable to create texture from %s! SDL Error: %s\n", path.c_str(), SDL_GetError() );
     }
 
+    // It probably has alphas so just set the blendmode
+    SDL_SetTextureBlendMode(newTexture, SDL_BLENDMODE_BLEND);
+
     logger.info("Texture created {}", path);
-    return Texture::smrtptr(new SDLTexture(newTexture));
+    return Texture::smrtptr(new SDLTexture(path, newTexture));
 }
 
 

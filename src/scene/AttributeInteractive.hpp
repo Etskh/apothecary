@@ -13,11 +13,17 @@ public:
     AttributeInteractive(Application* app);
     virtual ~AttributeInteractive();
 
+	// Lifecycle
 	virtual void onInit();
 	virtual void onInteract(event::Type type, event::EventData data);
 
+	// Access to members
+	std::shared_ptr<AttributePosition> getPos();
+
+	// For catching the event
+	virtual void onActivate(event::EventData data) =0;
+
 public:
-    Guid _id;
 	std::shared_ptr<AttributePosition> _posAttribute;
 };
 

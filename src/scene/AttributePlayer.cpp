@@ -3,7 +3,7 @@
 
 #include "AttributePlayer.hpp"
 
-AttributeType AttributePlayer::type = ATTRIBUTETYPE_IMAGE;
+AttributeType AttributePlayer::type = ATTRIBUTETYPE_PLAYER;
 
 AttributePlayer::AttributePlayer(const Input* input)
     : Attribute(AttributePlayer::type)

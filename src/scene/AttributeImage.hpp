@@ -8,6 +8,19 @@
 // #include "Attribute.hpp"
 #include "AttributePosition.hpp"
 
+
+enum Anchor {
+	ANCHOR_TOP_LEFT,
+	ANCHOR_TOP_CENTRE,
+	ANCHOR_TOP_RIGHT,
+	ANCHOR_MID_LEFT,
+	ANCHOR_MID_CENTRE,
+	ANCHOR_MID_RIGHT,
+	ANCHOR_BOT_LEFT,
+	ANCHOR_BOT_CENTRE,
+	ANCHOR_BOT_RIGHT,
+};
+
 class AttributeImage: public Attribute {
 public:
 	static AttributeType type;
@@ -19,6 +32,8 @@ public:
 	virtual void onInit();
 	virtual void onUpdate(float delta);
 
+	void setAnchor(Anchor anchor);
+
 	// Change the renderer
 	void hide();
 	void show();
@@ -29,6 +44,7 @@ public:
 	std::shared_ptr<AttributePosition> _posAttribute;
 	Renderable _renderable;
 	bool _isHidden;
+	Anchor _anchor;
 };
 
 #endif /* end of include guard _INCLUDE_ATTRIBUTETEXTURE_HPP */
