@@ -133,6 +133,8 @@ int SDLDevice::run() {
             }
         }
 
+        getCamera().update(delta);
+
     	this->render(delta);
     }
 
@@ -142,7 +144,7 @@ int SDLDevice::run() {
 
 void SDLDevice::render(float delta) {
 
-    SDL_SetRenderDrawColor(renderer, 30, 100, 50, 0xFF);
+    SDL_SetRenderDrawColor(renderer, 117, 131, 91, 0xFF);
     SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
     SDL_RenderClear(renderer);
 
@@ -158,16 +160,16 @@ void SDLDevice::render(float delta) {
 
         // SDL_QueryTexture(_texture, NULL, NULL, &texW, &texH);
         SDL_Rect rect = {
-            renderable.posX,
-            renderable.posY,
+            renderable.posX + static_cast<int>(getCamera().getPos().x),
+            renderable.posY + static_cast<int>(getCamera().getPos().y),
             renderable.width,
             renderable.height
         };
         SDL_RenderCopy(renderer, renderable.texture->getHandle(), NULL, &rect);
 
         // This is debug only
-
-        SDL_SetRenderDrawColor(renderer, 255, 0, 0, SDL_ALPHA_OPAQUE);
+        /*
+        SDL_SetRenderDrawColor(renderer, 255, 255, 255, SDL_ALPHA_OPAQUE);
         const int COUNT = 4;
         SDL_Point points[COUNT] = {
             {renderable.posX, renderable.posY},
@@ -176,16 +178,23 @@ void SDLDevice::render(float delta) {
             {renderable.posX, renderable.posY + renderable.height}
         };
         SDL_RenderDrawLines(renderer, points, COUNT);
-        // Draw the point at the origin
-        SDL_SetRenderDrawColor(renderer, 100, 100, 255, SDL_ALPHA_OPAQUE);
-        SDL_RenderDrawPoint(renderer, renderable.posX, renderable.posY);
-
+        */
     }
     //Update the screen
     SDL_RenderPresent(renderer);
 
     //Take a quick break after all that hard work
     SDL_Delay(delta);
+}
+
+
+void SDLDevice::setIcon(const char* path) {
+    SDL_Surface* surface = IMG_Load(path);
+    if( surface == nullptr ) {
+        logger.error("Unable to load image: {}", path);
+        return;
+    }
+    SDL_SetWindowIcon(window, surface);
 }
 
 

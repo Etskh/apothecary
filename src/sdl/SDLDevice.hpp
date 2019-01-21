@@ -21,6 +21,7 @@ public:
     virtual bool init(const DataEntry& config);
     virtual int run();
     virtual void render(float delta);
+    virtual void setIcon(const char* path);
 
     virtual Font::smrtptr createFont(const char* fontName);
     virtual Texture::smrtptr createTexture(const char* path);

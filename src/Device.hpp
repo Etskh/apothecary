@@ -9,6 +9,7 @@
 #include "Renderable.hpp"
 #include "Font.hpp"
 #include "Texture.hpp"
+#include "Camera.hpp"
 
 // #include "scene/SceneNode.hpp"
 
@@ -21,6 +22,7 @@ public:
     virtual bool init(const DataEntry& config) = 0;
     virtual int run(void) = 0;
     virtual void render(float delta) = 0;
+    virtual void setIcon(const char* path) = 0;
 
     virtual Font::smrtptr createFont (const char* fontName) = 0;
     virtual Texture::smrtptr createTexture(const char* path) = 0;
@@ -29,9 +31,16 @@ public:
     virtual bool updateRenderableTexture (Renderable texture, const Rect2d& rect, bool isHidden) = 0;
     virtual bool destroyRenderable (Renderable renderable) = 0;
 
+    inline Camera& getCamera() {
+        return _camera;
+    };
+
 
 protected:
     Device();
+
+private:
+    Camera _camera;
 };
 
 

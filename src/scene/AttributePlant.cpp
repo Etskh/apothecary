@@ -8,6 +8,7 @@ AttributePlant::AttributePlant(Application* app, Ingredient ingredient)
     : AttributeInteractive(app)
     , _app(app)
     , _ingredient(ingredient)
+    , _isActive(true)
 {
     // empty
 }
@@ -18,11 +19,15 @@ AttributePlant::~AttributePlant() {
 
 // For catching the event
 void AttributePlant::onActivate(event::EventData data) {
-    auto imageAttr = getSibling<AttributeImage>();
-    imageAttr->hide();
+    if( _isActive ) {
+        auto imageAttr = getSibling<AttributeImage>();
+        imageAttr->hide();
 
-    // Then move the ingredient to the inventory
-    event::EventData inventoryEvent;
-    inventoryEvent.setString("name", _ingredient.name.c_str());
-    _app->send(event::INVENTORY_ADD, inventoryEvent);
+        // Then move the ingredient to the inventory
+        event::EventData inventoryEvent;
+        inventoryEvent.setString("name", _ingredient.name.c_str());
+        _app->send(event::INVENTORY_ADD, inventoryEvent);
+
+        _isActive = false;
+    }
 }

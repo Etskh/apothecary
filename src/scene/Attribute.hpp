@@ -20,14 +20,16 @@ enum AttributeType {
 };
 
 inline const char* etostr(AttributeType t) {
-	static const char* str[] = {
-		"none",
-		"text",
-		"image",
-		"position",
+    static const char* str[] = {
+        "none",
+        "text",
+        "image",
+        "position",
         "interactive",
-	};
-	return str[t];
+        "player",
+        "plant",
+    };
+    return str[t];
 }
 
 

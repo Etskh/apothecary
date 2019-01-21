@@ -80,7 +80,7 @@ public:
     template<class ... Types>
     void debug(const char* str, Types ... args) const {
         String severity("DEBUG");
-        log(colourize(severity, Green), str, args...);
+        // log(colourize(severity, Green), str, args...);
     }
 
     template<class ... Types>

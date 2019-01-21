@@ -14,9 +14,12 @@ public:
 	// For catching the event
 	virtual void onActivate(event::EventData data);
 
+	inline bool isActive() { return _isActive; }
+
 private:
     Application* _app;
     Ingredient _ingredient;
+	bool _isActive;
 };
 
 

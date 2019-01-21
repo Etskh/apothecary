@@ -5,6 +5,7 @@
 #include "scene/AttributePosition.hpp"
 #include "scene/AttributeImage.hpp"
 #include "scene/AttributePlayer.hpp"
+#include "scene/AttributePlant.hpp"
 #include "scene/AttributeText.hpp"
 
 #include "./Plants.hpp"
@@ -13,8 +14,9 @@
 ApothecaryApp::ApothecaryApp()
     : Application("The Apothecary")
     , device(nullptr)
-    , scene(*this, "root")
     , input(*this)
+    , _scene(*this, "root")
+    , _gameState(GAMESTATE_WORLD)
 {
     // empty
 }
@@ -29,6 +31,8 @@ int ApothecaryApp::run() {
         logger.error("Quitting because device could not be created");
         return 1;
     }
+
+    device->setIcon("./data/dew-herb.png");
 
     // Set up the initial keymaps
     // TODO: load from data file
@@ -63,16 +67,36 @@ int ApothecaryApp::run() {
     // Base for all things affected by a camera
     auto world = SceneNode::Create(*this, "world");
     // world->createAttribute<AttributeCamera>()
-    scene.addChild(world);
+    _scene.addChild(world);
 
-    world->addChild(LoadScene(*this, "./data/scene1.json"));
+    auto deco1 = SceneNode::Create(*this, "deco1");
+    deco1->get<AttributePosition>()->set(200, 200, 128, 128);
+    deco1->createAttribute<AttributeImage>(loadTexture("./data/grass-patch.png"), device);
+    world->addChild(deco1);
+    auto deco2 = SceneNode::Create(*this, "deco2");
+    deco2->get<AttributePosition>()->set(120, 230, 128, 128);
+    deco2->createAttribute<AttributeImage>(loadTexture("./data/grass-patch.png"), device);
+    world->addChild(deco2);
+    auto deco3 = SceneNode::Create(*this, "deco3");
+    deco3->get<AttributePosition>()->set(0, 300, 128, 128);
+    deco3->createAttribute<AttributeImage>(loadTexture("./data/grass-patch.png"), device);
+    world->addChild(deco3);
 
-    player = SceneNode::Create(*this, "guy");
-    player->get<AttributePosition>()->set(200.f, 400.f, 50.f, 100.f);
-    player->createAttribute<AttributePlayer>(&input);
-    player->createAttribute<AttributeImage>(guyTexture, device);
-    player->get<AttributeImage>()->setAnchor(ANCHOR_BOT_CENTRE);
-    world->addChild(player);
+    // TODO: load scene with file
+    world->addChild(createPlant("Dew Herb", 200.f, 200.f));
+    world->addChild(createPlant("Ember Flower", 130.f, 300.f));
+    world->addChild(createPlant("Dew Herb", 100.f, 400.f));
+    world->addChild(createPlant("Dew Herb", 300.f, 250.f));
+    world->addChild(createPlant("Ember Flower", 240.f, 10.f));
+    world->addChild(createPlant("Ember Flower", 150.f, 320.f));
+    world->addChild(createPlant("Indigo Reed", 220.f, 280.f));
+
+    _player = SceneNode::Create(*this, "guy");
+    _player->get<AttributePosition>()->set(200.f, 400.f, 50.f, 100.f);
+    _player->createAttribute<AttributePlayer>(&input);
+    _player->createAttribute<AttributeImage>(guyTexture, device);
+    _player->get<AttributeImage>()->setAnchor(ANCHOR_BOT_CENTRE);
+    world->addChild(_player);
 
     // Debug printing here
     {
@@ -89,16 +113,26 @@ int ApothecaryApp::run() {
 
 void ApothecaryApp::onUpdate(event::Type type, event::EventData data) {
 
-    // If the player hit the "interact button"
-    if( input.getButton("interact") ) {
-        float x = player->get<AttributePosition>()->getX();
-        float y = player->get<AttributePosition>()->getY();
+    float playerX = _player->get<AttributePosition>()->getX();
+    float playerY = _player->get<AttributePosition>()->getY();
 
-        event::EventData interactEvent;
-        interactEvent.setNumber("x", x);
-        interactEvent.setNumber("y", y);
+    if(_gameState == GAMESTATE_WORLD ) {
+        // If the player hit the "interact button"
+        if( input.getButton("interact") ) {
+            event::EventData interactEvent;
+            interactEvent.setNumber("x", playerX);
+            interactEvent.setNumber("y", playerY);
 
-        send(event::APP_INTERACT, interactEvent);
+            send(event::APP_INTERACT, interactEvent);
+        }
+
+        // Move camera to player if we're walking around
+        // Get the screen size
+        float screenX = 640;
+        float screenY = 480;
+        device->getCamera().moveTo(
+            Vector2((screenX / 2) - playerX, (screenY / 2) - playerY + 64)
+        );
     }
 }
 
@@ -109,41 +143,81 @@ void ApothecaryApp::onInventoryAdd(event::Type type, event::EventData data) {
     plant.name = data.getString("name");
     //plant. = data.getNumber("name");
 
-    _ingredients.push_back(plant);
+    _inventory.push_back(plant);
 }
 
 Texture::smrtptr ApothecaryApp::loadTexture(const char* path) {
-    //_textureLib.find()
+    Texture::smrtptr texture = Texture::smrtptr(nullptr);
 
-    // Load the texture and add it to the list
-    Texture::smrtptr texture = device->createTexture(path);
-    _textureLib.push_back(texture);
-
+    // Grab the texture from the list
+    try {
+        texture = _textureLib.at(path);
+    } catch( std::out_of_range exception) {
+        texture = device->createTexture(path);
+        // TODO: put the ./data/ on the front of it
+        _textureLib.insert(std::pair<String,Texture::smrtptr>(path, texture));
+    }
     return texture;
+}
+
+
+SceneNode::smrtptr ApothecaryApp::createPlant(const char* type, float x, float y) {
+    Ingredient plant;
+    try {
+        plant = _ingredientLib.at(type);
+    } catch( std::out_of_range exception) {
+        logger.error("No plant named {}", type);
+        return SceneNode::smrtptr(nullptr);
+    }
+
+    auto grass = SceneNode::Create(*this, stringify(createGuid()));
+
+    grass->get<AttributePosition>()->set(x, y, 32, 32 * plant.height);
+    grass->createAttribute<AttributeImage>(plant.inventoryTexture, device);
+    grass->get<AttributeImage>()->setAnchor(ANCHOR_BOT_CENTRE);
+    grass->createAttribute<AttributePlant>(this, plant);
+
+    return grass;
 }
 
 
 void ApothecaryApp::loadIngredients() {
     // TODO: Load the CSV
 
-    //  Load the corresponding image
-    // TODO: generate the string path
-    Texture::smrtptr texture = loadTexture("./data/dew-herb.png");
-
     // TODO: For each ingredient, create the ingredient
     Ingredient plant;
+
+    // TODO: loop over the ingredients
+
     plant.name = "Dew Herb";
     plant.plantType = HERB;
     plant.elementType = EARTH;
     plant.reagentType = NO_REAGENT;
     plant.power = 12.f;
-    plant.inventoryTexture = texture;
+    plant.height = 1.f;
+    plant.weight = 0.5f;
+    plant.inventoryTexture = loadTexture("./data/dew-herb.png");
+    _ingredientLib.insert(std::pair<String, Ingredient>(plant.name, plant));
 
-    // TODO: Load the corresponding image
+    plant.name = "Ember Flower";
+    plant.plantType = FLOWER;
+    plant.elementType = FIRE;
+    plant.reagentType = NO_REAGENT;
+    plant.power = 5.f;
+    plant.height = 2.f;
+    plant.weight = 0.5f;
+    plant.inventoryTexture = loadTexture("./data/ember-flower.png");
+    _ingredientLib.insert(std::pair<String, Ingredient>(plant.name, plant));
 
-    // TODO: Add to list of ingredients
-
-    _ingredientLib.push_back(plant);
+    plant.name = "Indigo Reed";
+    plant.plantType = REED;
+    plant.elementType = NO_ELEMENT;
+    plant.reagentType = REAGENT_CATALYST;
+    plant.power = 7.f;
+    plant.height = 2.f;
+    plant.weight = 0.5f;
+    plant.inventoryTexture = loadTexture("./data/indigo-reed.png");
+    _ingredientLib.insert(std::pair<String, Ingredient>(plant.name, plant));
 }
 
 

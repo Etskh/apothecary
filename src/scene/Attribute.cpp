@@ -2,9 +2,9 @@
 #include "Attribute.hpp"
 
 Attribute::Attribute(AttributeType type)
-    : _type(type)
+    : _id(createGuid())
+    , _type(type)
     , _parentGetter(nullptr)
-    , _id(createGuid())
 {
     // empty
 }

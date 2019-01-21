@@ -28,8 +28,7 @@ void AttributeInteractive::onInteract(event::Type type, event::EventData data) {
     Vector2 player = Vector2(data.getNumber("x"), data.getNumber("y"));
     Vector2 pos = Vector2(_posAttribute->getX(), _posAttribute->getY());
 
-    // TODO: see if it's close!
-    if( isCloseTo(player, pos)) {
+    if( player.isCloseTo(pos)) {
         onActivate(data);
     }
 }

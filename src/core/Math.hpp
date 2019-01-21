@@ -18,6 +18,10 @@ struct Vector2 {
     {
         // empty
     }
+
+    void lerp(const Vector2& destination, float delta);
+
+    bool isCloseTo(const Vector2& other);
 };
 
 

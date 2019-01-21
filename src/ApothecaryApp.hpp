@@ -1,7 +1,7 @@
 #ifndef _INCLUDE_APOTHECARYAPP_HPP
 #define _INCLUDE_APOTHECARYAPP_HPP
 
-#include <vector>
+#include <map>
 #include <list>
 
 #include "Application.hpp"
@@ -9,6 +9,13 @@
 #include "Device.hpp"
 #include "Input.hpp"
 #include "Plants.hpp"
+
+
+enum GameState {
+    GAMESTATE_WORLD,
+    GAMESTATE_INVENTORY,
+};
+
 
 class ApothecaryApp: public Application {
 public:
@@ -25,18 +32,25 @@ public:
 
     // Resources
     Texture::smrtptr loadTexture(const char* path);
+    SceneNode::smrtptr createPlant(const char* type, float x, float y);
 
     // Mutators
     virtual Device::smrtptr getDevice();
 
 private:
-    std::vector<Ingredient> _ingredientLib;
-    std::vector<Texture::smrtptr> _textureLib;
+    // Systems
     Device::smrtptr device;
-    SceneNode scene;
-    SceneNode::smrtptr player;
-    std::list<Ingredient> _ingredients;
     Input input;
+
+    // Resources
+    std::map<String, Ingredient> _ingredientLib;
+    std::map<String, Texture::smrtptr> _textureLib;
+
+    // Gameplay
+    SceneNode _scene;
+    SceneNode::smrtptr _player;
+    std::list<Ingredient> _inventory;
+    GameState _gameState;
 };
 
 

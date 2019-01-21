@@ -39,7 +39,7 @@ enum InventoryType {
     INGREDIENT,
     REAGENT,
     ELEMENT,
-    INVENTORY_TYPE_COUNT,
+    INVENTORY_COUNT,
 };
 
 struct Ingredient {
@@ -49,6 +49,8 @@ struct Ingredient {
     ReagentType reagentType;
     float level;
     float power;
+    float height;
+    float weight;
     InventoryType inventoryType;
     Texture::smrtptr inventoryTexture;
 };
