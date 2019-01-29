@@ -11,6 +11,7 @@ AttributeImage::AttributeImage(Texture::smrtptr texture, Device::smrtptr device)
     , _device(device)
     , _renderable(0)
     , _isHidden(false)
+    , _transparency(1.0f)
     , _anchor(ANCHOR_TOP_LEFT)
 {
     // empty
@@ -55,7 +56,7 @@ void AttributeImage::onUpdate(float delta) {
         rect.posY -= rect.height;
     }
 
-    _device->updateRenderableTexture(_renderable, rect, _isHidden);
+    _device->updateRenderableTexture(_renderable, rect, _isHidden ? 0.0f : _transparency);
 }
 
 
@@ -69,4 +70,12 @@ void AttributeImage::show() {
 
 void AttributeImage::hide() {
     _isHidden = true;
+}
+
+void AttributeImage::setTransparency(float transparency) {
+    _transparency = transparency;
+}
+
+float AttributeImage::getTransparency() const {
+    return _transparency;
 }

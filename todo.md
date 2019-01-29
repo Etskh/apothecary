@@ -1,4 +1,6 @@
 # Features
+reduce ingredients to reagents
+
 
 
 # Tasks
@@ -10,10 +12,11 @@
 ✓   fix alpha transparency
 ✓   activating plant picks it up
 ✓   application loads textures and stores in lib
-
-## World
+✓	states determine if player can move about, etc
 ✓	Camera in device to translate scene
 ✓	add brush and tree deco
+
+## World
 	character has different clip for different facings
 	other characters (npcs) in world
 	npcs can be interacted with
@@ -22,6 +25,8 @@
 	tonic recovers stamina
 
 ## Invetory
+	renderables have transparency
+
 	UI has anchor and can flex-flow
 	pressing B opens inventory
 	inventory shows all picked up ingredients
@@ -34,5 +39,5 @@
 	loads scene from file
 	application loads all plants from csv
 
-Stretch
+## Stretch
 	character has shadow that shows time of day

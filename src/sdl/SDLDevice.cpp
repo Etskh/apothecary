@@ -151,20 +151,30 @@ void SDLDevice::render(float delta) {
     // Draw all of the renderable objecst
     for( auto it = _renderables.begin(); it != _renderables.end(); ++it) {
         SDLRenderable& renderable = it->second;
+        int cameraX = 0;
+        int cameraY = 0;
+
         if( !renderable.texture ) {
             continue;
         }
-        if( renderable.isHidden ) {
+        if( renderable.transparency < 0.01f ) {
             continue;
+        }
+
+        if( renderable.isWorldSpace ) {
+            cameraX = static_cast<int>(getCamera().getPos().x);
+            cameraY = static_cast<int>(getCamera().getPos().y);
         }
 
         // SDL_QueryTexture(_texture, NULL, NULL, &texW, &texH);
         SDL_Rect rect = {
-            renderable.posX + static_cast<int>(getCamera().getPos().x),
-            renderable.posY + static_cast<int>(getCamera().getPos().y),
+            renderable.posX + cameraX,
+            renderable.posY + cameraY,
             renderable.width,
             renderable.height
         };
+        // TODO: Find a more efficient way of doing this
+        SDL_SetTextureAlphaMod(renderable.texture->getHandle(), static_cast<Uint8>(255 * renderable.transparency));
         SDL_RenderCopy(renderer, renderable.texture->getHandle(), NULL, &rect);
 
         // This is debug only
@@ -252,6 +262,31 @@ Texture::smrtptr SDLDevice::createTexture(const char* path) {
 }
 
 
+Texture::smrtptr SDLDevice::createTexture(float r, float g, float b) {
+    // TODO: take in a w&h for setting the size
+    int width = 256;
+    int height = 256;
+    // to match what's currently being loaded in
+    Uint32 pixelFormat = SDL_PIXELFORMAT_ARGB8888;
+    // we're probably going to use this as a static asset
+    int access = SDL_TEXTUREACCESS_STATIC;
+
+    // Create the big texture
+    SDL_Texture* newTexture = SDL_CreateTexture(
+        renderer,
+        pixelFormat,
+        access,
+        width,
+        height);
+
+    String nameFormat = "{}:{}:{}";
+    String name = ::format(nameFormat, stringify(r), stringify(g), stringify(b));
+
+    logger.info("Texture created {}", name);
+    return Texture::smrtptr(new SDLTexture(name.c_str(), newTexture));
+}
+
+
 Renderable SDLDevice::createRenderableTexture(Texture::smrtptr tex, const Rect2d& rect) {
     SDLRenderable renderable = SDLRenderable(tex,
         static_cast<int>(rect.posX),
@@ -262,12 +297,12 @@ Renderable SDLDevice::createRenderableTexture(Texture::smrtptr tex, const Rect2d
     return createRenderable(renderable);
 }
 
-bool SDLDevice::updateRenderableTexture(Renderable texture, const Rect2d& rect, bool isHidden) {
+bool SDLDevice::updateRenderableTexture(Renderable texture, const Rect2d& rect, float transparency) {
     SDLRenderable& renderable = _renderables.at(texture);
     renderable.posX = static_cast<int>(rect.posX);
     renderable.posY = static_cast<int>(rect.posY);
     renderable.width = static_cast<int>(rect.width);
     renderable.height = static_cast<int>(rect.height);
-    renderable.isHidden = isHidden;
+    renderable.transparency = transparency;
     return true;
 }

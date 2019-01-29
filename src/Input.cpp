@@ -8,6 +8,7 @@ const char* etostr(KeyCode code) {
     case KEY_RIGHT: return "KEY_RIGHT";
     case KEY_DOWN: return "KEY_DOWN";
     case KEY_SPACE: return "KEY_SPACE";
+    case KEY_B: return "KEY_B";
     default:
         Logger logger("Input");
         logger.error("Unknown string for code {}", stringify(code));

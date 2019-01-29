@@ -14,6 +14,8 @@ public:
 	virtual void onInit();
 	virtual void onUpdate(float delta);
 
+	void allowMovement(bool allow);
+
 public:
     const Input* _input;
 	std::shared_ptr<AttributePosition> _attrPos;
@@ -21,6 +23,7 @@ public:
 	float _height; // in metres
 	float _speed; // in metres per second
 	float _ratio; // pixels to metre
+	bool _allowMovement;
 };
 
 

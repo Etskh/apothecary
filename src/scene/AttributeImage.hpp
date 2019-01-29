@@ -38,12 +38,16 @@ public:
 	void hide();
 	void show();
 
+    void setTransparency(float transparency);
+    float getTransparency() const;
+
 public:
     Texture::smrtptr _texture;
 	Device::smrtptr _device;
 	std::shared_ptr<AttributePosition> _posAttribute;
 	Renderable _renderable;
 	bool _isHidden;
+	float _transparency;
 	Anchor _anchor;
 };
 

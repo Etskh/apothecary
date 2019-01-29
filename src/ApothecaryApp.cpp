@@ -32,6 +32,7 @@ int ApothecaryApp::run() {
         return 1;
     }
 
+    // Set the icon
     device->setIcon("./data/dew-herb.png");
 
     // Set up the initial keymaps
@@ -39,6 +40,7 @@ int ApothecaryApp::run() {
     input.setAxisMap("walk.x", KEY_LEFT, KEY_RIGHT);
     input.setAxisMap("walk.y", KEY_UP, KEY_DOWN);
     input.setButtonMap("interact", KEY_SPACE);
+    input.setButtonMap("toggle-inventory", KEY_B);
 
     // Set up all the events
     auto onUpdate = std::bind(&ApothecaryApp::onUpdate, this, std::placeholders::_1, std::placeholders::_2);
@@ -52,6 +54,13 @@ int ApothecaryApp::run() {
 
     // Load the ingredientLibrary
     loadIngredients();
+
+    auto inventory_ui = SceneNode::Create(*this, "ui");
+    inventory_ui->get<AttributePosition>()->set(0, 0, 256, 256);
+    inventory_ui->createAttribute<AttributeImage>(device->createTexture(0.f, 0.f, 0.f), device);
+    inventory_ui->get<AttributeImage>()->setTransparency(0.1f);
+    //inventory_ui->get<AttributeImage>()->hide();
+    _scene.addChild(inventory_ui);
 
     /*
     auto title = SceneNode::Create(*this, "title");
@@ -96,6 +105,7 @@ int ApothecaryApp::run() {
     _player->createAttribute<AttributePlayer>(&input);
     _player->createAttribute<AttributeImage>(guyTexture, device);
     _player->get<AttributeImage>()->setAnchor(ANCHOR_BOT_CENTRE);
+    //_player->get<AttributeImage>()->setTransparency(0.5f);
     world->addChild(_player);
 
     // Debug printing here
@@ -126,8 +136,22 @@ void ApothecaryApp::onUpdate(event::Type type, event::EventData data) {
             send(event::APP_INTERACT, interactEvent);
         }
 
+        if( input.getButton("toggle-inventory") ) {
+            printf("INVENTORY\n");
+            // Open up the inventory and change state
+            // TODO do a state-change event
+            _gameState = GAMESTATE_INVENTORY;
+            _player->get<AttributePlayer>()->allowMovement(false);
+
+            SceneNode::smrtptr inventory = _scene.find("ui");
+            if( inventory ) {
+                inventory->get<AttributeImage>()->show();
+            }
+        }
+
         // Move camera to player if we're walking around
         // Get the screen size
+        // TODO: get actual size of screen - don't assume 640x480 you idiot!
         float screenX = 640;
         float screenY = 480;
         device->getCamera().moveTo(

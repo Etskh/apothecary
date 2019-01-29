@@ -4,6 +4,10 @@
 #include "Application.hpp"
 
 enum KeyCode {
+    KEY_B = 5,
+
+    KEY_ESCAPE = 41,
+
     KEY_SPACE = 44,
 
     KEY_LEFT = 80,

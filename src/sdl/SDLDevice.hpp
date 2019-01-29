@@ -25,9 +25,10 @@ public:
 
     virtual Font::smrtptr createFont(const char* fontName);
     virtual Texture::smrtptr createTexture(const char* path);
+    virtual Texture::smrtptr createTexture(float r, float g, float b);
 
     virtual Renderable createRenderableTexture (Texture::smrtptr tex, const Rect2d& rect);
-    virtual bool updateRenderableTexture (Renderable texture, const Rect2d& rect, bool isHidden);
+    virtual bool updateRenderableTexture (Renderable texture, const Rect2d& rect, float transparency);
 
     void sendKeyEvent(SDL_Event& event, bool isPressed);
 

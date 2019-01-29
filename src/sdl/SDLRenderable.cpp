@@ -7,6 +7,8 @@ SDLRenderable::SDLRenderable(Texture::smrtptr tex, int x, int y, int w, int h)
  , posY(y)
  , width(w)
  , height(h)
+ , transparency(1.0f)
+ , isWorldSpace(true)
 {
     // empty
 }

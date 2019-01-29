@@ -25,7 +25,9 @@ public:
     void update(float delta);
 
     // Children
+    const String& getName() const;
     void addChild(SceneNode::smrtptr node);
+    SceneNode::smrtptr find(const char* name);
 
     // Attributes
     void addAttribute(Attribute::smrtptr attribute);

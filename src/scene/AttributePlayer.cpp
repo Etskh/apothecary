@@ -11,6 +11,7 @@ AttributePlayer::AttributePlayer(const Input* input)
     , _height(2.f)
     , _speed(4.f)
     , _ratio(1.f)
+    , _allowMovement(true)
 {
     // empty
 }
@@ -21,6 +22,10 @@ AttributePlayer::~AttributePlayer()
     // empty
 }
 
+void AttributePlayer::allowMovement(bool allow) {
+    _allowMovement = allow;
+}
+
 void AttributePlayer::onInit() {
     _attrPos = getOrCreateSibling<AttributePosition>();
 
@@ -28,10 +33,12 @@ void AttributePlayer::onInit() {
 }
 
 void AttributePlayer::onUpdate(float delta) {
-    float deltaMov = _speed * _ratio * delta;
+    if( _allowMovement ) {
 
-    // Gathering deltas based on input
-    float deltaX = deltaMov * _input->getAxis("walk.x");
-    float deltaY = deltaMov * _input->getAxis("walk.y");
-    _attrPos->moveBy(deltaX, deltaY);
+        float deltaMov = _speed * _ratio * delta;
+        // Gathering deltas based on input
+        float deltaX = deltaMov * _input->getAxis("walk.x");
+        float deltaY = deltaMov * _input->getAxis("walk.y");
+        _attrPos->moveBy(deltaX, deltaY);
+    }
 }

@@ -36,6 +36,25 @@ void SceneNode::addChild(SceneNode::smrtptr node) {
     _children.push_back(node);
 }
 
+SceneNode::smrtptr SceneNode::find(const char* name) {
+    SceneNode::smrtptr found = nullptr;
+    for( auto it= _children.begin(); it != _children.end(); ++it) {
+        // TODO: use CRC32
+        if( (*it)->getName() == name ) {
+            return *it;
+        }
+        found = (*it)->find(name);
+    }
+    if( !found ) {
+        logger.warning("Cannot find child {}", name);
+    }
+    return found;
+}
+
+const String& SceneNode::getName() const {
+    return name;
+}
+
 Attribute::smrtptr SceneNode::getAttribute(AttributeType type) {
     for( auto it=_attributes.begin(); it != _attributes.end(); ++it) {
         if((*it)->getType() == type ) {

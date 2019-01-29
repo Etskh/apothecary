@@ -16,6 +16,7 @@ public:
 
 protected:
     String _path;
+    float _transparency;
     static Logger logger;
 };
 

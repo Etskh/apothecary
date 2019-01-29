@@ -26,9 +26,10 @@ public:
 
     virtual Font::smrtptr createFont (const char* fontName) = 0;
     virtual Texture::smrtptr createTexture(const char* path) = 0;
+    virtual Texture::smrtptr createTexture(float r, float g, float b) = 0;
 
     virtual Renderable createRenderableTexture (Texture::smrtptr tex, const Rect2d& rect) = 0;
-    virtual bool updateRenderableTexture (Renderable texture, const Rect2d& rect, bool isHidden) = 0;
+    virtual bool updateRenderableTexture (Renderable texture, const Rect2d& rect, float transparency) = 0;
     virtual bool destroyRenderable (Renderable renderable) = 0;
 
     inline Camera& getCamera() {
